@@ -5,6 +5,15 @@ go 1.21.4
 require github.com/pocketbase/pocketbase v0.22.13
 
 require (
+	github.com/dlclark/regexp2 v1.10.0 // indirect
+	github.com/dop251/goja v0.0.0-20231027120936-b396bb4c349d // indirect
+	github.com/dop251/goja_nodejs v0.0.0-20231122114759-e84d9a924c5c // indirect
+	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
+	github.com/google/pprof v0.0.0-20240409012703-83162a5b38cd // indirect
+)
+
+require (
 	github.com/AlecAivazis/survey/v2 v2.3.7 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.27.0 // indirect
