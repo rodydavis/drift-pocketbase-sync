@@ -1,0 +1,9 @@
+name: scripts
+description: "Scripts"
+publish_to: 'none'
+version: 1.0.0+1
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+dependencies:
+  pocketbase: ^0.18.1
+  recase: ^4.1.0

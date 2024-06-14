@@ -1,0 +1,25 @@
+CREATE TABLE key_value (
+  "key" TEXT NOT NULL PRIMARY KEY,
+  value TEXT,
+  UNIQUE("key")
+);
+
+setItem:
+INSERT OR REPLACE 
+INTO key_value ("key", value) 
+VALUES (:key, :value)
+RETURNING *;
+
+getItem:
+SELECT value FROM key_value 
+WHERE "key" = :key;
+
+deleteItem:
+DELETE FROM key_value 
+WHERE "key" = :key;
+
+searchItem:
+SELECT "key", value
+FROM key_value 
+WHERE "key" LIKE :query 
+OR value LIKE :query;
