@@ -1,4 +1,4 @@
-# flutter-pocketbase-sync
+# drift-pocketbase-sync
 
 This is a simple Flutter project that demonstrates how to sync a [Pocketbase](https://pocketbase.io/) database with a [Flutter](https://flutter.dev) [SQLite](https://sqlite.org/) database via [drift](https://drift.simonbinder.eu/) without using a CRDT.
 
