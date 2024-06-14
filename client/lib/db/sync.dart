@@ -8,43 +8,58 @@ import 'database.dart';
 import 'sql/generated.dart';
 import 'mapper.dart';
 
-// TODO: Add Tests
-Future<void> sync(Database db, PocketBase pb) async {
-  // Fetch most recent local deleted record updated date
-  final newestDeleted = await db //
-      .deletedRecordsGetFreshest()
-      .getSingleOrNull()
-      .then((r) => r?.updated.pbDate);
-  // Fetch remote deleted records
-  final deletedRecords = await pb //
-      .collection(Collections.deletedRecords.id)
-      .getFullList(
-        filter: newestDeleted == null ? null : "updated > '$newestDeleted'",
-      );
-  // Apply deletes locally to prevent updating deleted records
-  final mapper = createMapper(db);
-  await db.transaction(() async {
-    for (final collection in Collections.values) {
-      final ids = deletedRecords
-          .where((e) => e.getStringValue('collection_id') == collection.id)
-          .map((e) => e.getStringValue('record_id'))
-          .toList();
-      final sql = StringBuffer();
-      sql.write('DELETE FROM ${collection.sql} ');
-      sql.write('WHERE id IN ${_args(db, ids)};');
-      final tbl = mapper[collection];
-      await db.customUpdate(
-        sql.toString(),
-        variables: _vars(db, ids),
-        updates: {if (tbl != null) tbl},
-        updateKind: UpdateKind.delete,
-      );
-    }
-  });
+class SyncService {
+  final Database db;
+  final PocketBase pb;
+  final Map<Collections, TableInfo<Table, PBCollection>> mapper;
 
-  for (final collection in Collections.values) {
+  SyncService(this.db, this.pb) : mapper = createMapper(db);
+
+// TODO: Add Tests
+  Future<void> syncCollections([Iterable<Collections>? collections]) async {
+    await syncRemoteDeletedRecords();
+
+    for (final collection in collections ?? Collections.values) {
+      await syncCollection(collection);
+    }
+  }
+
+  Future<void> syncRemoteDeletedRecords() async {
+    // Fetch most recent local deleted record updated date
+    final newestDeleted = await db //
+        .deletedRecordsGetFreshest()
+        .getSingleOrNull()
+        .then((r) => r?.updated.pbDate);
+    // Fetch remote deleted records
+    final deletedRecords = await pb //
+        .collection(Collections.deletedRecords.id)
+        .getFullList(
+          filter: newestDeleted == null ? null : "updated > '$newestDeleted'",
+        );
+    // Apply deletes locally to prevent updating deleted records
+    await db.transaction(() async {
+      for (final collection in Collections.values) {
+        final ids = deletedRecords
+            .where((e) => e.getStringValue('collection_id') == collection.id)
+            .map((e) => e.getStringValue('record_id'))
+            .toList();
+        final sql = StringBuffer();
+        sql.write('DELETE FROM ${collection.sql} ');
+        sql.write('WHERE id IN ${_args(db, ids)};');
+        final tbl = mapper[collection];
+        await db.customUpdate(
+          sql.toString(),
+          variables: _vars(db, ids),
+          updates: {if (tbl != null) tbl},
+          updateKind: UpdateKind.delete,
+        );
+      }
+    });
+  }
+
+  Future<void> syncCollection(Collections collection) async {
     final tbl = mapper[collection];
-    if (tbl == null) continue;
+    if (tbl == null) return;
     final fetchKey = '${collection.id}-last-fetch';
     final lastFetch = await db.getItem(key: fetchKey).getSingleOrNull();
 

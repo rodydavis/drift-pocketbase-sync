@@ -9,6 +9,7 @@ void main() {
   group("sync", () {
     late Database db;
     late PocketBase pb;
+    late SyncService service;
 
     Future<void> resetPb() async {
       final collections = await pb.collections.getFullList();
@@ -26,6 +27,7 @@ void main() {
     setUp(() async {
       db = Database(NativeDatabase.memory());
       pb = PocketBase("http://127.0.0.1:8090");
+      service = SyncService(db, pb);
       await pb.admins.authWithPassword("admin@email.com", "admin123456");
       await resetPb();
     });
@@ -142,7 +144,7 @@ void main() {
         dbSongs = await db.songsGetAll().get();
         expect(dbSongs.isEmpty, true);
 
-        await sync(db, pb);
+        await service.syncCollections();
 
         dbSongs = await db.songsGetAll().get();
         final dbSong = dbSongs.first;
@@ -166,7 +168,7 @@ void main() {
         expect(song.synced, false);
         expect(remoteSongs.isEmpty, true);
 
-        await sync(db, pb);
+        await service.syncCollections();
 
         remoteSongs = await col.getFullList();
         expect(remoteSongs.isNotEmpty, true);
@@ -194,7 +196,7 @@ void main() {
         expect(song.synced, false);
         expect(remoteSongs.isEmpty, true);
 
-        await sync(db, pb);
+        await service.syncCollections();
 
         remoteSongs = await col.getFullList();
         var remoteSong = remoteSongs.first;
@@ -221,7 +223,7 @@ void main() {
         expect(song.synced, false);
         expect(remoteSong.data['name'], 'Track 1');
 
-        await sync(db, pb);
+        await service.syncCollections();
 
         dbSongs = await db.songsGetAll().get();
         song = dbSongs.first;
@@ -237,7 +239,7 @@ void main() {
       test('Remote edits should update existing local records', () async {
         final id = db.newId();
         await createRemoteSong(pb, 'Track 1', id: id);
-        await sync(db, pb);
+        await service.syncCollections();
 
         var songs = await db.songsGetAll().get();
         var song = songs.first;
@@ -246,7 +248,7 @@ void main() {
         expect(song.name, 'Track 1');
 
         await updateRemoteSong(pb, id, 'Track 2');
-        await sync(db, pb);
+        await service.syncCollections();
 
         songs = await db.songsGetAll().get();
         song = songs.first;
@@ -258,7 +260,7 @@ void main() {
       test('Local edits that are newer will override remote', () async {
         final id = db.newId();
         await createRemoteSong(pb, 'Track 1', id: id);
-        await sync(db, pb);
+        await service.syncCollections();
 
         var songs = await db.songsGetAll().get();
         var song = songs.first;
@@ -275,7 +277,7 @@ void main() {
         expect(song.id, remoteSong.id);
         expect(remoteSong.getStringValue('name'), 'Track 1');
 
-        await sync(db, pb);
+        await service.syncCollections();
 
         songs = await db.songsGetAll().get();
         song = songs.first;
@@ -292,7 +294,7 @@ void main() {
       test('Local edits that are older will be overridden by remote', () async {
         final id = db.newId();
         await createRemoteSong(pb, 'Track 1', id: id);
-        await sync(db, pb);
+        await service.syncCollections();
 
         var songs = await db.songsGetAll().get();
         var song = songs.first;
@@ -314,7 +316,7 @@ void main() {
         expect(song.id, remoteSong.id);
         expect(remoteSong.getStringValue('name'), 'Track 3');
 
-        await sync(db, pb);
+        await service.syncCollections();
 
         songs = await db.songsGetAll().get();
         song = songs.first;
@@ -331,7 +333,7 @@ void main() {
       test('Remote deletes will override any local edits', () async {
         final id = db.newId();
         await createRemoteSong(pb, 'Track 1', id: id);
-        await sync(db, pb);
+        await service.syncCollections();
 
         var songs = await db.songsGetAll().get();
         var song = songs.first;
@@ -341,7 +343,7 @@ void main() {
 
         await pb.collection(Collections.songs.id).delete(id);
 
-        await sync(db, pb);
+        await service.syncCollections();
 
         songs = await db.songsGetAll().get();
         final rd = await pb //

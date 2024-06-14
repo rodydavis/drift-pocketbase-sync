@@ -76,7 +76,8 @@ To sync the data call the sync command:
 ```dart
 final Database db = ...;
 final PocketBase pb = ...;
-await sync(db, pb);
+final service = SyncService(db, pb);
+await service.syncCollections();
 ```
 
 This will first check for any new deletes and remove them from the local database.
