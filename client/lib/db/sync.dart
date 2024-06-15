@@ -15,7 +15,6 @@ class SyncService {
 
   SyncService(this.db, this.pb) : mapper = createMapper(db);
 
-// TODO: Add Tests
   Future<void> syncCollections([Iterable<Collections>? collections]) async {
     await syncRemoteDeletedRecords();
 
