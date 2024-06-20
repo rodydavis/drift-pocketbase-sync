@@ -30,51 +30,7 @@ class SyncService {
     }
   }
 
-  // Future<void> syncRemoteDeletedRecords() async {
-  //   // Fetch most recent local deleted record updated date
-  //   final sql = StringBuffer();
-  //   sql.write('SELECT * FROM ${Collections.changes.sql} ');
-  //   sql.write("WHERE action = 'delete' ");
-  //   sql.write("ORDER BY updated ");
-  //   sql.write("LIMIT 1;");
-
-  //   final changesTbl = mapper[Collections.changes]!;
-
-  //   final newestDeleted = await db
-  //       .customSelect(sql.toString(), readsFrom: {changesTbl})
-  //       .asyncMap(changesTbl.mapFromRow)
-  //       .getSingleOrNull()
-  //       .then((r) => (r is PBBase) ? r.updated.pbDate : null);
-
-  //   // Fetch remote deleted records
-  //   final deletedRecords = await pb //
-  //       .collection(Collections.changes.id)
-  //       .getFullList(
-  //         filter: newestDeleted == null
-  //             ? null
-  //             : "updated >= '$newestDeleted' && action = 'delete'",
-  //       );
-  //   // Apply deletes locally to prevent updating deleted records
-  //   await db.transaction(() async {
-  //     for (final collection in Collections.values) {
-  //       final ids = deletedRecords
-  //           .where((e) => e.getStringValue('collection_id') == collection.id)
-  //           .map((e) => e.getStringValue('record_id'))
-  //           .toList();
-  //       final sql = StringBuffer();
-  //       sql.write('DELETE FROM ${collection.sql} ');
-  //       sql.write('WHERE id IN ${_args(db, ids)};');
-  //       final tbl = mapper[collection];
-  //       await db.customUpdate(
-  //         sql.toString(),
-  //         variables: _vars(db, ids),
-  //         updates: {if (tbl != null) tbl},
-  //         updateKind: UpdateKind.delete,
-  //       );
-  //     }
-  //   });
-  // }
-
+  // TODO: Add sync filter for auth collection (otherwise records will be deleted locally - multi user)
   Future<void> syncCollection(Collections collection) async {
     if (_syncing[collection] == true) return;
     _syncing[collection] = true;
