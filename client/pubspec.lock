@@ -278,11 +278,29 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  flutter_localizations:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  form_builder_validators:
+    dependency: "direct main"
+    description:
+      name: form_builder_validators
+      sha256: "475853a177bfc832ec12551f752fd0001278358a6d42d2364681ff15f48f67cf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.0.1"
   frontend_server_client:
     dependency: transitive
     description:
@@ -299,6 +317,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: cdae1b9c8bd7efadcef6112e81c903662ef2ce105cbd220a04bbb7c3425b5554
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.2.0"
   graphs:
     dependency: transitive
     description:
@@ -571,6 +597,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  signals:
+    dependency: "direct main"
+    description:
+      name: signals
+      sha256: "94927d4069a158a6a20ad98990e6c67faeeed4ae6af681c1696fb98f3fbd5d2e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.2"
+  signals_core:
+    dependency: transitive
+    description:
+      name: signals_core
+      sha256: e5888685b9a3cff7c9814bd433195b1f76d0bfa3eae135e0a2f4ff5c48a56a1c
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.2"
+  signals_flutter:
+    dependency: transitive
+    description:
+      name: signals_flutter
+      sha256: "1c202bc5136fbe1d8d71b66202e8f71bc10b957ca678c1f44d0d3af2aeb678cc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.2"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -593,7 +643,7 @@ packages:
     source: hosted
     version: "1.10.0"
   sqlite3:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sqlite3
       sha256: b384f598b813b347c5a7e5ffad82cbaff1bec3d1561af267041e66f6f0899295
@@ -664,6 +714,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
+  timeago:
+    dependency: "direct main"
+    description:
+      name: timeago
+      sha256: d3204eb4c788214883380253da7f23485320a58c11d145babc82ad16bf4e7764
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.6.1"
   timing:
     dependency: transitive
     description:

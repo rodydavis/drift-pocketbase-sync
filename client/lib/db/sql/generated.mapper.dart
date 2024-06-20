@@ -20,9 +20,9 @@ class PBBaseMapper extends ClassMapperBase<PBBase> {
       UserPlaylistItemMapper.ensureInitialized();
       SongMapper.ensureInitialized();
       UserActivityMapper.ensureInitialized();
-      DeletedRecordMapper.ensureInitialized();
       UserLikedSongMapper.ensureInitialized();
       UserFollowerMapper.ensureInitialized();
+      ChangMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -441,16 +441,6 @@ class UserMapper extends ClassMapperBase<User> {
 
   static String _$id(User v) => v.id;
   static const Field<User, String> _f$id = Field('id', _$id);
-  static DateTime _$created(User v) => v.created;
-  static const Field<User, DateTime> _f$created = Field('created', _$created);
-  static DateTime _$updated(User v) => v.updated;
-  static const Field<User, DateTime> _f$updated = Field('updated', _$updated);
-  static bool _$deleted(User v) => v.deleted;
-  static const Field<User, bool> _f$deleted = Field('deleted', _$deleted);
-  static bool _$synced(User v) => v.synced;
-  static const Field<User, bool> _f$synced = Field('synced', _$synced);
-  static bool _$fresh(User v) => v.fresh;
-  static const Field<User, bool> _f$fresh = Field('fresh', _$fresh);
   static String? _$username(User v) => v.username;
   static const Field<User, String> _f$username = Field('username', _$username);
   static String? _$email(User v) => v.email;
@@ -465,37 +455,47 @@ class UserMapper extends ClassMapperBase<User> {
   static String? _$avatar(User v) => v.avatar;
   static const Field<User, String> _f$avatar =
       Field('avatar', _$avatar, opt: true);
+  static DateTime _$created(User v) => v.created;
+  static const Field<User, DateTime> _f$created = Field('created', _$created);
+  static DateTime _$updated(User v) => v.updated;
+  static const Field<User, DateTime> _f$updated = Field('updated', _$updated);
+  static bool _$deleted(User v) => v.deleted;
+  static const Field<User, bool> _f$deleted = Field('deleted', _$deleted);
+  static bool _$synced(User v) => v.synced;
+  static const Field<User, bool> _f$synced = Field('synced', _$synced);
+  static bool _$fresh(User v) => v.fresh;
+  static const Field<User, bool> _f$fresh = Field('fresh', _$fresh);
 
   @override
   final MappableFields<User> fields = const {
     #id: _f$id,
-    #created: _f$created,
-    #updated: _f$updated,
-    #deleted: _f$deleted,
-    #synced: _f$synced,
-    #fresh: _f$fresh,
     #username: _f$username,
     #email: _f$email,
     #emailVisibility: _f$emailVisibility,
     #verified: _f$verified,
     #name: _f$name,
     #avatar: _f$avatar,
+    #created: _f$created,
+    #updated: _f$updated,
+    #deleted: _f$deleted,
+    #synced: _f$synced,
+    #fresh: _f$fresh,
   };
 
   static User _instantiate(DecodingData data) {
     return User(
         id: data.dec(_f$id),
-        created: data.dec(_f$created),
-        updated: data.dec(_f$updated),
-        deleted: data.dec(_f$deleted),
-        synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
         username: data.dec(_f$username),
         email: data.dec(_f$email),
         emailVisibility: data.dec(_f$emailVisibility),
         verified: data.dec(_f$verified),
         name: data.dec(_f$name),
-        avatar: data.dec(_f$avatar));
+        avatar: data.dec(_f$avatar),
+        created: data.dec(_f$created),
+        updated: data.dec(_f$updated),
+        deleted: data.dec(_f$deleted),
+        synced: data.dec(_f$synced),
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -547,17 +547,17 @@ abstract class UserCopyWith<$R, $In extends User, $Out>
   @override
   $R call(
       {String? id,
-      DateTime? created,
-      DateTime? updated,
-      bool? deleted,
-      bool? synced,
-      bool? fresh,
       String? username,
       String? email,
       bool? emailVisibility,
       bool? verified,
       String? name,
-      String? avatar});
+      String? avatar,
+      DateTime? created,
+      DateTime? updated,
+      bool? deleted,
+      bool? synced,
+      bool? fresh});
   UserCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -570,45 +570,45 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
   @override
   $R call(
           {String? id,
-          DateTime? created,
-          DateTime? updated,
-          bool? deleted,
-          bool? synced,
-          bool? fresh,
           Object? username = $none,
           Object? email = $none,
           Object? emailVisibility = $none,
           Object? verified = $none,
           Object? name = $none,
-          Object? avatar = $none}) =>
+          Object? avatar = $none,
+          DateTime? created,
+          DateTime? updated,
+          bool? deleted,
+          bool? synced,
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
-        if (created != null) #created: created,
-        if (updated != null) #updated: updated,
-        if (deleted != null) #deleted: deleted,
-        if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
         if (username != $none) #username: username,
         if (email != $none) #email: email,
         if (emailVisibility != $none) #emailVisibility: emailVisibility,
         if (verified != $none) #verified: verified,
         if (name != $none) #name: name,
-        if (avatar != $none) #avatar: avatar
+        if (avatar != $none) #avatar: avatar,
+        if (created != null) #created: created,
+        if (updated != null) #updated: updated,
+        if (deleted != null) #deleted: deleted,
+        if (synced != null) #synced: synced,
+        if (fresh != null) #fresh: fresh
       }));
   @override
   User $make(CopyWithData data) => User(
       id: data.get(#id, or: $value.id),
-      created: data.get(#created, or: $value.created),
-      updated: data.get(#updated, or: $value.updated),
-      deleted: data.get(#deleted, or: $value.deleted),
-      synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
       username: data.get(#username, or: $value.username),
       email: data.get(#email, or: $value.email),
       emailVisibility: data.get(#emailVisibility, or: $value.emailVisibility),
       verified: data.get(#verified, or: $value.verified),
       name: data.get(#name, or: $value.name),
-      avatar: data.get(#avatar, or: $value.avatar));
+      avatar: data.get(#avatar, or: $value.avatar),
+      created: data.get(#created, or: $value.created),
+      updated: data.get(#updated, or: $value.updated),
+      deleted: data.get(#deleted, or: $value.deleted),
+      synced: data.get(#synced, or: $value.synced),
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   UserCopyWith<$R2, User, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
@@ -632,6 +632,8 @@ class AlbumMapper extends ClassMapperBase<Album> {
 
   static String _$id(Album v) => v.id;
   static const Field<Album, String> _f$id = Field('id', _$id);
+  static String _$name(Album v) => v.name;
+  static const Field<Album, String> _f$name = Field('name', _$name);
   static DateTime _$created(Album v) => v.created;
   static const Field<Album, DateTime> _f$created = Field('created', _$created);
   static DateTime _$updated(Album v) => v.updated;
@@ -642,29 +644,27 @@ class AlbumMapper extends ClassMapperBase<Album> {
   static const Field<Album, bool> _f$synced = Field('synced', _$synced);
   static bool _$fresh(Album v) => v.fresh;
   static const Field<Album, bool> _f$fresh = Field('fresh', _$fresh);
-  static String _$name(Album v) => v.name;
-  static const Field<Album, String> _f$name = Field('name', _$name);
 
   @override
   final MappableFields<Album> fields = const {
     #id: _f$id,
+    #name: _f$name,
     #created: _f$created,
     #updated: _f$updated,
     #deleted: _f$deleted,
     #synced: _f$synced,
     #fresh: _f$fresh,
-    #name: _f$name,
   };
 
   static Album _instantiate(DecodingData data) {
     return Album(
         id: data.dec(_f$id),
+        name: data.dec(_f$name),
         created: data.dec(_f$created),
         updated: data.dec(_f$updated),
         deleted: data.dec(_f$deleted),
         synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        name: data.dec(_f$name));
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -716,12 +716,12 @@ abstract class AlbumCopyWith<$R, $In extends Album, $Out>
   @override
   $R call(
       {String? id,
+      String? name,
       DateTime? created,
       DateTime? updated,
       bool? deleted,
       bool? synced,
-      bool? fresh,
-      String? name});
+      bool? fresh});
   AlbumCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -734,30 +734,30 @@ class _AlbumCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Album, $Out>
   @override
   $R call(
           {String? id,
+          String? name,
           DateTime? created,
           DateTime? updated,
           bool? deleted,
           bool? synced,
-          bool? fresh,
-          String? name}) =>
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
+        if (name != null) #name: name,
         if (created != null) #created: created,
         if (updated != null) #updated: updated,
         if (deleted != null) #deleted: deleted,
         if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (name != null) #name: name
+        if (fresh != null) #fresh: fresh
       }));
   @override
   Album $make(CopyWithData data) => Album(
       id: data.get(#id, or: $value.id),
+      name: data.get(#name, or: $value.name),
       created: data.get(#created, or: $value.created),
       updated: data.get(#updated, or: $value.updated),
       deleted: data.get(#deleted, or: $value.deleted),
       synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      name: data.get(#name, or: $value.name));
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   AlbumCopyWith<$R2, Album, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
@@ -781,6 +781,14 @@ class AlbumTrackMapper extends ClassMapperBase<AlbumTrack> {
 
   static String _$id(AlbumTrack v) => v.id;
   static const Field<AlbumTrack, String> _f$id = Field('id', _$id);
+  static String _$albumId(AlbumTrack v) => v.albumId;
+  static const Field<AlbumTrack, String> _f$albumId =
+      Field('albumId', _$albumId, key: 'album_id');
+  static String _$songId(AlbumTrack v) => v.songId;
+  static const Field<AlbumTrack, String> _f$songId =
+      Field('songId', _$songId, key: 'song_id');
+  static double _$order(AlbumTrack v) => v.order;
+  static const Field<AlbumTrack, double> _f$order = Field('order', _$order);
   static DateTime _$created(AlbumTrack v) => v.created;
   static const Field<AlbumTrack, DateTime> _f$created =
       Field('created', _$created);
@@ -793,39 +801,31 @@ class AlbumTrackMapper extends ClassMapperBase<AlbumTrack> {
   static const Field<AlbumTrack, bool> _f$synced = Field('synced', _$synced);
   static bool _$fresh(AlbumTrack v) => v.fresh;
   static const Field<AlbumTrack, bool> _f$fresh = Field('fresh', _$fresh);
-  static String _$albumId(AlbumTrack v) => v.albumId;
-  static const Field<AlbumTrack, String> _f$albumId =
-      Field('albumId', _$albumId, key: 'album_id');
-  static String _$songId(AlbumTrack v) => v.songId;
-  static const Field<AlbumTrack, String> _f$songId =
-      Field('songId', _$songId, key: 'song_id');
-  static double _$order(AlbumTrack v) => v.order;
-  static const Field<AlbumTrack, double> _f$order = Field('order', _$order);
 
   @override
   final MappableFields<AlbumTrack> fields = const {
     #id: _f$id,
+    #albumId: _f$albumId,
+    #songId: _f$songId,
+    #order: _f$order,
     #created: _f$created,
     #updated: _f$updated,
     #deleted: _f$deleted,
     #synced: _f$synced,
     #fresh: _f$fresh,
-    #albumId: _f$albumId,
-    #songId: _f$songId,
-    #order: _f$order,
   };
 
   static AlbumTrack _instantiate(DecodingData data) {
     return AlbumTrack(
         id: data.dec(_f$id),
+        albumId: data.dec(_f$albumId),
+        songId: data.dec(_f$songId),
+        order: data.dec(_f$order),
         created: data.dec(_f$created),
         updated: data.dec(_f$updated),
         deleted: data.dec(_f$deleted),
         synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        albumId: data.dec(_f$albumId),
-        songId: data.dec(_f$songId),
-        order: data.dec(_f$order));
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -882,14 +882,14 @@ abstract class AlbumTrackCopyWith<$R, $In extends AlbumTrack, $Out>
   @override
   $R call(
       {String? id,
+      String? albumId,
+      String? songId,
+      double? order,
       DateTime? created,
       DateTime? updated,
       bool? deleted,
       bool? synced,
-      bool? fresh,
-      String? albumId,
-      String? songId,
-      double? order});
+      bool? fresh});
   AlbumTrackCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -904,36 +904,36 @@ class _AlbumTrackCopyWithImpl<$R, $Out>
   @override
   $R call(
           {String? id,
+          String? albumId,
+          String? songId,
+          double? order,
           DateTime? created,
           DateTime? updated,
           bool? deleted,
           bool? synced,
-          bool? fresh,
-          String? albumId,
-          String? songId,
-          double? order}) =>
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
+        if (albumId != null) #albumId: albumId,
+        if (songId != null) #songId: songId,
+        if (order != null) #order: order,
         if (created != null) #created: created,
         if (updated != null) #updated: updated,
         if (deleted != null) #deleted: deleted,
         if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (albumId != null) #albumId: albumId,
-        if (songId != null) #songId: songId,
-        if (order != null) #order: order
+        if (fresh != null) #fresh: fresh
       }));
   @override
   AlbumTrack $make(CopyWithData data) => AlbumTrack(
       id: data.get(#id, or: $value.id),
+      albumId: data.get(#albumId, or: $value.albumId),
+      songId: data.get(#songId, or: $value.songId),
+      order: data.get(#order, or: $value.order),
       created: data.get(#created, or: $value.created),
       updated: data.get(#updated, or: $value.updated),
       deleted: data.get(#deleted, or: $value.deleted),
       synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      albumId: data.get(#albumId, or: $value.albumId),
-      songId: data.get(#songId, or: $value.songId),
-      order: data.get(#order, or: $value.order));
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   AlbumTrackCopyWith<$R2, AlbumTrack, $Out2> $chain<$R2, $Out2>(
@@ -958,6 +958,11 @@ class UserPlaylistMapper extends ClassMapperBase<UserPlaylist> {
 
   static String _$id(UserPlaylist v) => v.id;
   static const Field<UserPlaylist, String> _f$id = Field('id', _$id);
+  static String _$name(UserPlaylist v) => v.name;
+  static const Field<UserPlaylist, String> _f$name = Field('name', _$name);
+  static String _$userId(UserPlaylist v) => v.userId;
+  static const Field<UserPlaylist, String> _f$userId =
+      Field('userId', _$userId, key: 'user_id');
   static DateTime _$created(UserPlaylist v) => v.created;
   static const Field<UserPlaylist, DateTime> _f$created =
       Field('created', _$created);
@@ -971,34 +976,29 @@ class UserPlaylistMapper extends ClassMapperBase<UserPlaylist> {
   static const Field<UserPlaylist, bool> _f$synced = Field('synced', _$synced);
   static bool _$fresh(UserPlaylist v) => v.fresh;
   static const Field<UserPlaylist, bool> _f$fresh = Field('fresh', _$fresh);
-  static String _$name(UserPlaylist v) => v.name;
-  static const Field<UserPlaylist, String> _f$name = Field('name', _$name);
-  static String _$userId(UserPlaylist v) => v.userId;
-  static const Field<UserPlaylist, String> _f$userId =
-      Field('userId', _$userId, key: 'user_id');
 
   @override
   final MappableFields<UserPlaylist> fields = const {
     #id: _f$id,
+    #name: _f$name,
+    #userId: _f$userId,
     #created: _f$created,
     #updated: _f$updated,
     #deleted: _f$deleted,
     #synced: _f$synced,
     #fresh: _f$fresh,
-    #name: _f$name,
-    #userId: _f$userId,
   };
 
   static UserPlaylist _instantiate(DecodingData data) {
     return UserPlaylist(
         id: data.dec(_f$id),
+        name: data.dec(_f$name),
+        userId: data.dec(_f$userId),
         created: data.dec(_f$created),
         updated: data.dec(_f$updated),
         deleted: data.dec(_f$deleted),
         synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        name: data.dec(_f$name),
-        userId: data.dec(_f$userId));
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -1056,13 +1056,13 @@ abstract class UserPlaylistCopyWith<$R, $In extends UserPlaylist, $Out>
   @override
   $R call(
       {String? id,
+      String? name,
+      String? userId,
       DateTime? created,
       DateTime? updated,
       bool? deleted,
       bool? synced,
-      bool? fresh,
-      String? name,
-      String? userId});
+      bool? fresh});
   UserPlaylistCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -1077,33 +1077,33 @@ class _UserPlaylistCopyWithImpl<$R, $Out>
   @override
   $R call(
           {String? id,
+          String? name,
+          String? userId,
           DateTime? created,
           DateTime? updated,
           bool? deleted,
           bool? synced,
-          bool? fresh,
-          String? name,
-          String? userId}) =>
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
+        if (name != null) #name: name,
+        if (userId != null) #userId: userId,
         if (created != null) #created: created,
         if (updated != null) #updated: updated,
         if (deleted != null) #deleted: deleted,
         if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (name != null) #name: name,
-        if (userId != null) #userId: userId
+        if (fresh != null) #fresh: fresh
       }));
   @override
   UserPlaylist $make(CopyWithData data) => UserPlaylist(
       id: data.get(#id, or: $value.id),
+      name: data.get(#name, or: $value.name),
+      userId: data.get(#userId, or: $value.userId),
       created: data.get(#created, or: $value.created),
       updated: data.get(#updated, or: $value.updated),
       deleted: data.get(#deleted, or: $value.deleted),
       synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      name: data.get(#name, or: $value.name),
-      userId: data.get(#userId, or: $value.userId));
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   UserPlaylistCopyWith<$R2, UserPlaylist, $Out2> $chain<$R2, $Out2>(
@@ -1128,6 +1128,18 @@ class UserPlaylistItemMapper extends ClassMapperBase<UserPlaylistItem> {
 
   static String _$id(UserPlaylistItem v) => v.id;
   static const Field<UserPlaylistItem, String> _f$id = Field('id', _$id);
+  static String _$playlistId(UserPlaylistItem v) => v.playlistId;
+  static const Field<UserPlaylistItem, String> _f$playlistId =
+      Field('playlistId', _$playlistId, key: 'playlist_id');
+  static String _$userId(UserPlaylistItem v) => v.userId;
+  static const Field<UserPlaylistItem, String> _f$userId =
+      Field('userId', _$userId, key: 'user_id');
+  static String _$songId(UserPlaylistItem v) => v.songId;
+  static const Field<UserPlaylistItem, String> _f$songId =
+      Field('songId', _$songId, key: 'song_id');
+  static double _$order(UserPlaylistItem v) => v.order;
+  static const Field<UserPlaylistItem, double> _f$order =
+      Field('order', _$order);
   static DateTime _$created(UserPlaylistItem v) => v.created;
   static const Field<UserPlaylistItem, DateTime> _f$created =
       Field('created', _$created);
@@ -1142,45 +1154,33 @@ class UserPlaylistItemMapper extends ClassMapperBase<UserPlaylistItem> {
       Field('synced', _$synced);
   static bool _$fresh(UserPlaylistItem v) => v.fresh;
   static const Field<UserPlaylistItem, bool> _f$fresh = Field('fresh', _$fresh);
-  static String _$playlistId(UserPlaylistItem v) => v.playlistId;
-  static const Field<UserPlaylistItem, String> _f$playlistId =
-      Field('playlistId', _$playlistId, key: 'playlist_id');
-  static String _$userId(UserPlaylistItem v) => v.userId;
-  static const Field<UserPlaylistItem, String> _f$userId =
-      Field('userId', _$userId, key: 'user_id');
-  static String _$songId(UserPlaylistItem v) => v.songId;
-  static const Field<UserPlaylistItem, String> _f$songId =
-      Field('songId', _$songId, key: 'song_id');
-  static double _$order(UserPlaylistItem v) => v.order;
-  static const Field<UserPlaylistItem, double> _f$order =
-      Field('order', _$order);
 
   @override
   final MappableFields<UserPlaylistItem> fields = const {
     #id: _f$id,
+    #playlistId: _f$playlistId,
+    #userId: _f$userId,
+    #songId: _f$songId,
+    #order: _f$order,
     #created: _f$created,
     #updated: _f$updated,
     #deleted: _f$deleted,
     #synced: _f$synced,
     #fresh: _f$fresh,
-    #playlistId: _f$playlistId,
-    #userId: _f$userId,
-    #songId: _f$songId,
-    #order: _f$order,
   };
 
   static UserPlaylistItem _instantiate(DecodingData data) {
     return UserPlaylistItem(
         id: data.dec(_f$id),
+        playlistId: data.dec(_f$playlistId),
+        userId: data.dec(_f$userId),
+        songId: data.dec(_f$songId),
+        order: data.dec(_f$order),
         created: data.dec(_f$created),
         updated: data.dec(_f$updated),
         deleted: data.dec(_f$deleted),
         synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        playlistId: data.dec(_f$playlistId),
-        userId: data.dec(_f$userId),
-        songId: data.dec(_f$songId),
-        order: data.dec(_f$order));
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -1240,15 +1240,15 @@ abstract class UserPlaylistItemCopyWith<$R, $In extends UserPlaylistItem, $Out>
   @override
   $R call(
       {String? id,
+      String? playlistId,
+      String? userId,
+      String? songId,
+      double? order,
       DateTime? created,
       DateTime? updated,
       bool? deleted,
       bool? synced,
-      bool? fresh,
-      String? playlistId,
-      String? userId,
-      String? songId,
-      double? order});
+      bool? fresh});
   UserPlaylistItemCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }
@@ -1264,39 +1264,39 @@ class _UserPlaylistItemCopyWithImpl<$R, $Out>
   @override
   $R call(
           {String? id,
+          String? playlistId,
+          String? userId,
+          String? songId,
+          double? order,
           DateTime? created,
           DateTime? updated,
           bool? deleted,
           bool? synced,
-          bool? fresh,
-          String? playlistId,
-          String? userId,
-          String? songId,
-          double? order}) =>
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
+        if (playlistId != null) #playlistId: playlistId,
+        if (userId != null) #userId: userId,
+        if (songId != null) #songId: songId,
+        if (order != null) #order: order,
         if (created != null) #created: created,
         if (updated != null) #updated: updated,
         if (deleted != null) #deleted: deleted,
         if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (playlistId != null) #playlistId: playlistId,
-        if (userId != null) #userId: userId,
-        if (songId != null) #songId: songId,
-        if (order != null) #order: order
+        if (fresh != null) #fresh: fresh
       }));
   @override
   UserPlaylistItem $make(CopyWithData data) => UserPlaylistItem(
       id: data.get(#id, or: $value.id),
+      playlistId: data.get(#playlistId, or: $value.playlistId),
+      userId: data.get(#userId, or: $value.userId),
+      songId: data.get(#songId, or: $value.songId),
+      order: data.get(#order, or: $value.order),
       created: data.get(#created, or: $value.created),
       updated: data.get(#updated, or: $value.updated),
       deleted: data.get(#deleted, or: $value.deleted),
       synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      playlistId: data.get(#playlistId, or: $value.playlistId),
-      userId: data.get(#userId, or: $value.userId),
-      songId: data.get(#songId, or: $value.songId),
-      order: data.get(#order, or: $value.order));
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   UserPlaylistItemCopyWith<$R2, UserPlaylistItem, $Out2> $chain<$R2, $Out2>(
@@ -1321,6 +1321,14 @@ class SongMapper extends ClassMapperBase<Song> {
 
   static String _$id(Song v) => v.id;
   static const Field<Song, String> _f$id = Field('id', _$id);
+  static String _$name(Song v) => v.name;
+  static const Field<Song, String> _f$name = Field('name', _$name);
+  static String? _$downloadLink(Song v) => v.downloadLink;
+  static const Field<Song, String> _f$downloadLink =
+      Field('downloadLink', _$downloadLink, key: 'download_link', opt: true);
+  static String? _$artistId(Song v) => v.artistId;
+  static const Field<Song, String> _f$artistId =
+      Field('artistId', _$artistId, key: 'artist_id', opt: true);
   static DateTime _$created(Song v) => v.created;
   static const Field<Song, DateTime> _f$created = Field('created', _$created);
   static DateTime _$updated(Song v) => v.updated;
@@ -1331,39 +1339,31 @@ class SongMapper extends ClassMapperBase<Song> {
   static const Field<Song, bool> _f$synced = Field('synced', _$synced);
   static bool _$fresh(Song v) => v.fresh;
   static const Field<Song, bool> _f$fresh = Field('fresh', _$fresh);
-  static String _$name(Song v) => v.name;
-  static const Field<Song, String> _f$name = Field('name', _$name);
-  static String? _$downloadLink(Song v) => v.downloadLink;
-  static const Field<Song, String> _f$downloadLink =
-      Field('downloadLink', _$downloadLink, key: 'download_link', opt: true);
-  static String? _$artistId(Song v) => v.artistId;
-  static const Field<Song, String> _f$artistId =
-      Field('artistId', _$artistId, key: 'artist_id', opt: true);
 
   @override
   final MappableFields<Song> fields = const {
     #id: _f$id,
+    #name: _f$name,
+    #downloadLink: _f$downloadLink,
+    #artistId: _f$artistId,
     #created: _f$created,
     #updated: _f$updated,
     #deleted: _f$deleted,
     #synced: _f$synced,
     #fresh: _f$fresh,
-    #name: _f$name,
-    #downloadLink: _f$downloadLink,
-    #artistId: _f$artistId,
   };
 
   static Song _instantiate(DecodingData data) {
     return Song(
         id: data.dec(_f$id),
+        name: data.dec(_f$name),
+        downloadLink: data.dec(_f$downloadLink),
+        artistId: data.dec(_f$artistId),
         created: data.dec(_f$created),
         updated: data.dec(_f$updated),
         deleted: data.dec(_f$deleted),
         synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        name: data.dec(_f$name),
-        downloadLink: data.dec(_f$downloadLink),
-        artistId: data.dec(_f$artistId));
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -1415,14 +1415,14 @@ abstract class SongCopyWith<$R, $In extends Song, $Out>
   @override
   $R call(
       {String? id,
+      String? name,
+      String? downloadLink,
+      String? artistId,
       DateTime? created,
       DateTime? updated,
       bool? deleted,
       bool? synced,
-      bool? fresh,
-      String? name,
-      String? downloadLink,
-      String? artistId});
+      bool? fresh});
   SongCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -1435,36 +1435,36 @@ class _SongCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Song, $Out>
   @override
   $R call(
           {String? id,
+          String? name,
+          Object? downloadLink = $none,
+          Object? artistId = $none,
           DateTime? created,
           DateTime? updated,
           bool? deleted,
           bool? synced,
-          bool? fresh,
-          String? name,
-          Object? downloadLink = $none,
-          Object? artistId = $none}) =>
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
+        if (name != null) #name: name,
+        if (downloadLink != $none) #downloadLink: downloadLink,
+        if (artistId != $none) #artistId: artistId,
         if (created != null) #created: created,
         if (updated != null) #updated: updated,
         if (deleted != null) #deleted: deleted,
         if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (name != null) #name: name,
-        if (downloadLink != $none) #downloadLink: downloadLink,
-        if (artistId != $none) #artistId: artistId
+        if (fresh != null) #fresh: fresh
       }));
   @override
   Song $make(CopyWithData data) => Song(
       id: data.get(#id, or: $value.id),
+      name: data.get(#name, or: $value.name),
+      downloadLink: data.get(#downloadLink, or: $value.downloadLink),
+      artistId: data.get(#artistId, or: $value.artistId),
       created: data.get(#created, or: $value.created),
       updated: data.get(#updated, or: $value.updated),
       deleted: data.get(#deleted, or: $value.deleted),
       synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      name: data.get(#name, or: $value.name),
-      downloadLink: data.get(#downloadLink, or: $value.downloadLink),
-      artistId: data.get(#artistId, or: $value.artistId));
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   SongCopyWith<$R2, Song, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
@@ -1488,16 +1488,6 @@ class ArtistMapper extends ClassMapperBase<Artist> {
 
   static String _$id(Artist v) => v.id;
   static const Field<Artist, String> _f$id = Field('id', _$id);
-  static DateTime _$created(Artist v) => v.created;
-  static const Field<Artist, DateTime> _f$created = Field('created', _$created);
-  static DateTime _$updated(Artist v) => v.updated;
-  static const Field<Artist, DateTime> _f$updated = Field('updated', _$updated);
-  static bool _$deleted(Artist v) => v.deleted;
-  static const Field<Artist, bool> _f$deleted = Field('deleted', _$deleted);
-  static bool _$synced(Artist v) => v.synced;
-  static const Field<Artist, bool> _f$synced = Field('synced', _$synced);
-  static bool _$fresh(Artist v) => v.fresh;
-  static const Field<Artist, bool> _f$fresh = Field('fresh', _$fresh);
   static String? _$username(Artist v) => v.username;
   static const Field<Artist, String> _f$username =
       Field('username', _$username);
@@ -1508,33 +1498,43 @@ class ArtistMapper extends ClassMapperBase<Artist> {
       Field('emailVisibility', _$emailVisibility);
   static bool? _$verified(Artist v) => v.verified;
   static const Field<Artist, bool> _f$verified = Field('verified', _$verified);
+  static DateTime _$created(Artist v) => v.created;
+  static const Field<Artist, DateTime> _f$created = Field('created', _$created);
+  static DateTime _$updated(Artist v) => v.updated;
+  static const Field<Artist, DateTime> _f$updated = Field('updated', _$updated);
+  static bool _$deleted(Artist v) => v.deleted;
+  static const Field<Artist, bool> _f$deleted = Field('deleted', _$deleted);
+  static bool _$synced(Artist v) => v.synced;
+  static const Field<Artist, bool> _f$synced = Field('synced', _$synced);
+  static bool _$fresh(Artist v) => v.fresh;
+  static const Field<Artist, bool> _f$fresh = Field('fresh', _$fresh);
 
   @override
   final MappableFields<Artist> fields = const {
     #id: _f$id,
+    #username: _f$username,
+    #email: _f$email,
+    #emailVisibility: _f$emailVisibility,
+    #verified: _f$verified,
     #created: _f$created,
     #updated: _f$updated,
     #deleted: _f$deleted,
     #synced: _f$synced,
     #fresh: _f$fresh,
-    #username: _f$username,
-    #email: _f$email,
-    #emailVisibility: _f$emailVisibility,
-    #verified: _f$verified,
   };
 
   static Artist _instantiate(DecodingData data) {
     return Artist(
         id: data.dec(_f$id),
+        username: data.dec(_f$username),
+        email: data.dec(_f$email),
+        emailVisibility: data.dec(_f$emailVisibility),
+        verified: data.dec(_f$verified),
         created: data.dec(_f$created),
         updated: data.dec(_f$updated),
         deleted: data.dec(_f$deleted),
         synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        username: data.dec(_f$username),
-        email: data.dec(_f$email),
-        emailVisibility: data.dec(_f$emailVisibility),
-        verified: data.dec(_f$verified));
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -1586,15 +1586,15 @@ abstract class ArtistCopyWith<$R, $In extends Artist, $Out>
   @override
   $R call(
       {String? id,
+      String? username,
+      String? email,
+      bool? emailVisibility,
+      bool? verified,
       DateTime? created,
       DateTime? updated,
       bool? deleted,
       bool? synced,
-      bool? fresh,
-      String? username,
-      String? email,
-      bool? emailVisibility,
-      bool? verified});
+      bool? fresh});
   ArtistCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -1607,39 +1607,39 @@ class _ArtistCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Artist, $Out>
   @override
   $R call(
           {String? id,
+          Object? username = $none,
+          Object? email = $none,
+          Object? emailVisibility = $none,
+          Object? verified = $none,
           DateTime? created,
           DateTime? updated,
           bool? deleted,
           bool? synced,
-          bool? fresh,
-          Object? username = $none,
-          Object? email = $none,
-          Object? emailVisibility = $none,
-          Object? verified = $none}) =>
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
+        if (username != $none) #username: username,
+        if (email != $none) #email: email,
+        if (emailVisibility != $none) #emailVisibility: emailVisibility,
+        if (verified != $none) #verified: verified,
         if (created != null) #created: created,
         if (updated != null) #updated: updated,
         if (deleted != null) #deleted: deleted,
         if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (username != $none) #username: username,
-        if (email != $none) #email: email,
-        if (emailVisibility != $none) #emailVisibility: emailVisibility,
-        if (verified != $none) #verified: verified
+        if (fresh != null) #fresh: fresh
       }));
   @override
   Artist $make(CopyWithData data) => Artist(
       id: data.get(#id, or: $value.id),
+      username: data.get(#username, or: $value.username),
+      email: data.get(#email, or: $value.email),
+      emailVisibility: data.get(#emailVisibility, or: $value.emailVisibility),
+      verified: data.get(#verified, or: $value.verified),
       created: data.get(#created, or: $value.created),
       updated: data.get(#updated, or: $value.updated),
       deleted: data.get(#deleted, or: $value.deleted),
       synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      username: data.get(#username, or: $value.username),
-      email: data.get(#email, or: $value.email),
-      emailVisibility: data.get(#emailVisibility, or: $value.emailVisibility),
-      verified: data.get(#verified, or: $value.verified));
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   ArtistCopyWith<$R2, Artist, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
@@ -1663,19 +1663,6 @@ class UserActivityMapper extends ClassMapperBase<UserActivity> {
 
   static String _$id(UserActivity v) => v.id;
   static const Field<UserActivity, String> _f$id = Field('id', _$id);
-  static DateTime _$created(UserActivity v) => v.created;
-  static const Field<UserActivity, DateTime> _f$created =
-      Field('created', _$created);
-  static DateTime _$updated(UserActivity v) => v.updated;
-  static const Field<UserActivity, DateTime> _f$updated =
-      Field('updated', _$updated);
-  static bool _$deleted(UserActivity v) => v.deleted;
-  static const Field<UserActivity, bool> _f$deleted =
-      Field('deleted', _$deleted);
-  static bool _$synced(UserActivity v) => v.synced;
-  static const Field<UserActivity, bool> _f$synced = Field('synced', _$synced);
-  static bool _$fresh(UserActivity v) => v.fresh;
-  static const Field<UserActivity, bool> _f$fresh = Field('fresh', _$fresh);
   static String _$userId(UserActivity v) => v.userId;
   static const Field<UserActivity, String> _f$userId =
       Field('userId', _$userId, key: 'user_id');
@@ -1693,37 +1680,50 @@ class UserActivityMapper extends ClassMapperBase<UserActivity> {
   static bool? _$private(UserActivity v) => v.private;
   static const Field<UserActivity, bool> _f$private =
       Field('private', _$private, opt: true);
+  static DateTime _$created(UserActivity v) => v.created;
+  static const Field<UserActivity, DateTime> _f$created =
+      Field('created', _$created);
+  static DateTime _$updated(UserActivity v) => v.updated;
+  static const Field<UserActivity, DateTime> _f$updated =
+      Field('updated', _$updated);
+  static bool _$deleted(UserActivity v) => v.deleted;
+  static const Field<UserActivity, bool> _f$deleted =
+      Field('deleted', _$deleted);
+  static bool _$synced(UserActivity v) => v.synced;
+  static const Field<UserActivity, bool> _f$synced = Field('synced', _$synced);
+  static bool _$fresh(UserActivity v) => v.fresh;
+  static const Field<UserActivity, bool> _f$fresh = Field('fresh', _$fresh);
 
   @override
   final MappableFields<UserActivity> fields = const {
     #id: _f$id,
-    #created: _f$created,
-    #updated: _f$updated,
-    #deleted: _f$deleted,
-    #synced: _f$synced,
-    #fresh: _f$fresh,
     #userId: _f$userId,
     #collectionId: _f$collectionId,
     #recordId: _f$recordId,
     #recordData: _f$recordData,
     #type: _f$type,
     #private: _f$private,
+    #created: _f$created,
+    #updated: _f$updated,
+    #deleted: _f$deleted,
+    #synced: _f$synced,
+    #fresh: _f$fresh,
   };
 
   static UserActivity _instantiate(DecodingData data) {
     return UserActivity(
         id: data.dec(_f$id),
-        created: data.dec(_f$created),
-        updated: data.dec(_f$updated),
-        deleted: data.dec(_f$deleted),
-        synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
         userId: data.dec(_f$userId),
         collectionId: data.dec(_f$collectionId),
         recordId: data.dec(_f$recordId),
         recordData: data.dec(_f$recordData),
         type: data.dec(_f$type),
-        private: data.dec(_f$private));
+        private: data.dec(_f$private),
+        created: data.dec(_f$created),
+        updated: data.dec(_f$updated),
+        deleted: data.dec(_f$deleted),
+        synced: data.dec(_f$synced),
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -1781,17 +1781,17 @@ abstract class UserActivityCopyWith<$R, $In extends UserActivity, $Out>
   @override
   $R call(
       {String? id,
-      DateTime? created,
-      DateTime? updated,
-      bool? deleted,
-      bool? synced,
-      bool? fresh,
       String? userId,
       String? collectionId,
       String? recordId,
       String? recordData,
       String? type,
-      bool? private});
+      bool? private,
+      DateTime? created,
+      DateTime? updated,
+      bool? deleted,
+      bool? synced,
+      bool? fresh});
   UserActivityCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -1806,231 +1806,50 @@ class _UserActivityCopyWithImpl<$R, $Out>
   @override
   $R call(
           {String? id,
-          DateTime? created,
-          DateTime? updated,
-          bool? deleted,
-          bool? synced,
-          bool? fresh,
           String? userId,
           String? collectionId,
           String? recordId,
           String? recordData,
           String? type,
-          Object? private = $none}) =>
+          Object? private = $none,
+          DateTime? created,
+          DateTime? updated,
+          bool? deleted,
+          bool? synced,
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
-        if (created != null) #created: created,
-        if (updated != null) #updated: updated,
-        if (deleted != null) #deleted: deleted,
-        if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
         if (userId != null) #userId: userId,
         if (collectionId != null) #collectionId: collectionId,
         if (recordId != null) #recordId: recordId,
         if (recordData != null) #recordData: recordData,
         if (type != null) #type: type,
-        if (private != $none) #private: private
+        if (private != $none) #private: private,
+        if (created != null) #created: created,
+        if (updated != null) #updated: updated,
+        if (deleted != null) #deleted: deleted,
+        if (synced != null) #synced: synced,
+        if (fresh != null) #fresh: fresh
       }));
   @override
   UserActivity $make(CopyWithData data) => UserActivity(
       id: data.get(#id, or: $value.id),
-      created: data.get(#created, or: $value.created),
-      updated: data.get(#updated, or: $value.updated),
-      deleted: data.get(#deleted, or: $value.deleted),
-      synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
       userId: data.get(#userId, or: $value.userId),
       collectionId: data.get(#collectionId, or: $value.collectionId),
       recordId: data.get(#recordId, or: $value.recordId),
       recordData: data.get(#recordData, or: $value.recordData),
       type: data.get(#type, or: $value.type),
-      private: data.get(#private, or: $value.private));
+      private: data.get(#private, or: $value.private),
+      created: data.get(#created, or: $value.created),
+      updated: data.get(#updated, or: $value.updated),
+      deleted: data.get(#deleted, or: $value.deleted),
+      synced: data.get(#synced, or: $value.synced),
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   UserActivityCopyWith<$R2, UserActivity, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
       _UserActivityCopyWithImpl($value, $cast, t);
-}
-
-class DeletedRecordMapper extends ClassMapperBase<DeletedRecord> {
-  DeletedRecordMapper._();
-
-  static DeletedRecordMapper? _instance;
-  static DeletedRecordMapper ensureInitialized() {
-    if (_instance == null) {
-      MapperContainer.globals.use(_instance = DeletedRecordMapper._());
-      PBBaseMapper.ensureInitialized();
-    }
-    return _instance!;
-  }
-
-  @override
-  final String id = 'DeletedRecord';
-
-  static String _$id(DeletedRecord v) => v.id;
-  static const Field<DeletedRecord, String> _f$id = Field('id', _$id);
-  static DateTime _$created(DeletedRecord v) => v.created;
-  static const Field<DeletedRecord, DateTime> _f$created =
-      Field('created', _$created);
-  static DateTime _$updated(DeletedRecord v) => v.updated;
-  static const Field<DeletedRecord, DateTime> _f$updated =
-      Field('updated', _$updated);
-  static bool _$deleted(DeletedRecord v) => v.deleted;
-  static const Field<DeletedRecord, bool> _f$deleted =
-      Field('deleted', _$deleted);
-  static bool _$synced(DeletedRecord v) => v.synced;
-  static const Field<DeletedRecord, bool> _f$synced = Field('synced', _$synced);
-  static bool _$fresh(DeletedRecord v) => v.fresh;
-  static const Field<DeletedRecord, bool> _f$fresh = Field('fresh', _$fresh);
-  static String _$collectionId(DeletedRecord v) => v.collectionId;
-  static const Field<DeletedRecord, String> _f$collectionId =
-      Field('collectionId', _$collectionId, key: 'collection_id');
-  static String _$recordId(DeletedRecord v) => v.recordId;
-  static const Field<DeletedRecord, String> _f$recordId =
-      Field('recordId', _$recordId, key: 'record_id');
-  static String _$recordData(DeletedRecord v) => v.recordData;
-  static const Field<DeletedRecord, String> _f$recordData =
-      Field('recordData', _$recordData, key: 'record_data');
-
-  @override
-  final MappableFields<DeletedRecord> fields = const {
-    #id: _f$id,
-    #created: _f$created,
-    #updated: _f$updated,
-    #deleted: _f$deleted,
-    #synced: _f$synced,
-    #fresh: _f$fresh,
-    #collectionId: _f$collectionId,
-    #recordId: _f$recordId,
-    #recordData: _f$recordData,
-  };
-
-  static DeletedRecord _instantiate(DecodingData data) {
-    return DeletedRecord(
-        id: data.dec(_f$id),
-        created: data.dec(_f$created),
-        updated: data.dec(_f$updated),
-        deleted: data.dec(_f$deleted),
-        synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        collectionId: data.dec(_f$collectionId),
-        recordId: data.dec(_f$recordId),
-        recordData: data.dec(_f$recordData));
-  }
-
-  @override
-  final Function instantiate = _instantiate;
-
-  static DeletedRecord fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<DeletedRecord>(map);
-  }
-
-  static DeletedRecord fromJson(String json) {
-    return ensureInitialized().decodeJson<DeletedRecord>(json);
-  }
-}
-
-mixin DeletedRecordMappable {
-  String toJson() {
-    return DeletedRecordMapper.ensureInitialized()
-        .encodeJson<DeletedRecord>(this as DeletedRecord);
-  }
-
-  Map<String, dynamic> toMap() {
-    return DeletedRecordMapper.ensureInitialized()
-        .encodeMap<DeletedRecord>(this as DeletedRecord);
-  }
-
-  DeletedRecordCopyWith<DeletedRecord, DeletedRecord, DeletedRecord>
-      get copyWith => _DeletedRecordCopyWithImpl(
-          this as DeletedRecord, $identity, $identity);
-  @override
-  String toString() {
-    return DeletedRecordMapper.ensureInitialized()
-        .stringifyValue(this as DeletedRecord);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return DeletedRecordMapper.ensureInitialized()
-        .equalsValue(this as DeletedRecord, other);
-  }
-
-  @override
-  int get hashCode {
-    return DeletedRecordMapper.ensureInitialized()
-        .hashValue(this as DeletedRecord);
-  }
-}
-
-extension DeletedRecordValueCopy<$R, $Out>
-    on ObjectCopyWith<$R, DeletedRecord, $Out> {
-  DeletedRecordCopyWith<$R, DeletedRecord, $Out> get $asDeletedRecord =>
-      $base.as((v, t, t2) => _DeletedRecordCopyWithImpl(v, t, t2));
-}
-
-abstract class DeletedRecordCopyWith<$R, $In extends DeletedRecord, $Out>
-    implements PBBaseCopyWith<$R, $In, $Out> {
-  @override
-  $R call(
-      {String? id,
-      DateTime? created,
-      DateTime? updated,
-      bool? deleted,
-      bool? synced,
-      bool? fresh,
-      String? collectionId,
-      String? recordId,
-      String? recordData});
-  DeletedRecordCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
-}
-
-class _DeletedRecordCopyWithImpl<$R, $Out>
-    extends ClassCopyWithBase<$R, DeletedRecord, $Out>
-    implements DeletedRecordCopyWith<$R, DeletedRecord, $Out> {
-  _DeletedRecordCopyWithImpl(super.value, super.then, super.then2);
-
-  @override
-  late final ClassMapperBase<DeletedRecord> $mapper =
-      DeletedRecordMapper.ensureInitialized();
-  @override
-  $R call(
-          {String? id,
-          DateTime? created,
-          DateTime? updated,
-          bool? deleted,
-          bool? synced,
-          bool? fresh,
-          String? collectionId,
-          String? recordId,
-          String? recordData}) =>
-      $apply(FieldCopyWithData({
-        if (id != null) #id: id,
-        if (created != null) #created: created,
-        if (updated != null) #updated: updated,
-        if (deleted != null) #deleted: deleted,
-        if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (collectionId != null) #collectionId: collectionId,
-        if (recordId != null) #recordId: recordId,
-        if (recordData != null) #recordData: recordData
-      }));
-  @override
-  DeletedRecord $make(CopyWithData data) => DeletedRecord(
-      id: data.get(#id, or: $value.id),
-      created: data.get(#created, or: $value.created),
-      updated: data.get(#updated, or: $value.updated),
-      deleted: data.get(#deleted, or: $value.deleted),
-      synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      collectionId: data.get(#collectionId, or: $value.collectionId),
-      recordId: data.get(#recordId, or: $value.recordId),
-      recordData: data.get(#recordData, or: $value.recordData));
-
-  @override
-  DeletedRecordCopyWith<$R2, DeletedRecord, $Out2> $chain<$R2, $Out2>(
-          Then<$Out2, $R2> t) =>
-      _DeletedRecordCopyWithImpl($value, $cast, t);
 }
 
 class UserLikedSongMapper extends ClassMapperBase<UserLikedSong> {
@@ -2050,6 +1869,12 @@ class UserLikedSongMapper extends ClassMapperBase<UserLikedSong> {
 
   static String _$id(UserLikedSong v) => v.id;
   static const Field<UserLikedSong, String> _f$id = Field('id', _$id);
+  static String _$userId(UserLikedSong v) => v.userId;
+  static const Field<UserLikedSong, String> _f$userId =
+      Field('userId', _$userId, key: 'user_id');
+  static String _$songId(UserLikedSong v) => v.songId;
+  static const Field<UserLikedSong, String> _f$songId =
+      Field('songId', _$songId, key: 'song_id');
   static DateTime _$created(UserLikedSong v) => v.created;
   static const Field<UserLikedSong, DateTime> _f$created =
       Field('created', _$created);
@@ -2063,35 +1888,29 @@ class UserLikedSongMapper extends ClassMapperBase<UserLikedSong> {
   static const Field<UserLikedSong, bool> _f$synced = Field('synced', _$synced);
   static bool _$fresh(UserLikedSong v) => v.fresh;
   static const Field<UserLikedSong, bool> _f$fresh = Field('fresh', _$fresh);
-  static String _$userId(UserLikedSong v) => v.userId;
-  static const Field<UserLikedSong, String> _f$userId =
-      Field('userId', _$userId, key: 'user_id');
-  static String _$songId(UserLikedSong v) => v.songId;
-  static const Field<UserLikedSong, String> _f$songId =
-      Field('songId', _$songId, key: 'song_id');
 
   @override
   final MappableFields<UserLikedSong> fields = const {
     #id: _f$id,
+    #userId: _f$userId,
+    #songId: _f$songId,
     #created: _f$created,
     #updated: _f$updated,
     #deleted: _f$deleted,
     #synced: _f$synced,
     #fresh: _f$fresh,
-    #userId: _f$userId,
-    #songId: _f$songId,
   };
 
   static UserLikedSong _instantiate(DecodingData data) {
     return UserLikedSong(
         id: data.dec(_f$id),
+        userId: data.dec(_f$userId),
+        songId: data.dec(_f$songId),
         created: data.dec(_f$created),
         updated: data.dec(_f$updated),
         deleted: data.dec(_f$deleted),
         synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        userId: data.dec(_f$userId),
-        songId: data.dec(_f$songId));
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -2150,13 +1969,13 @@ abstract class UserLikedSongCopyWith<$R, $In extends UserLikedSong, $Out>
   @override
   $R call(
       {String? id,
+      String? userId,
+      String? songId,
       DateTime? created,
       DateTime? updated,
       bool? deleted,
       bool? synced,
-      bool? fresh,
-      String? userId,
-      String? songId});
+      bool? fresh});
   UserLikedSongCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -2171,33 +1990,33 @@ class _UserLikedSongCopyWithImpl<$R, $Out>
   @override
   $R call(
           {String? id,
+          String? userId,
+          String? songId,
           DateTime? created,
           DateTime? updated,
           bool? deleted,
           bool? synced,
-          bool? fresh,
-          String? userId,
-          String? songId}) =>
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
+        if (userId != null) #userId: userId,
+        if (songId != null) #songId: songId,
         if (created != null) #created: created,
         if (updated != null) #updated: updated,
         if (deleted != null) #deleted: deleted,
         if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (userId != null) #userId: userId,
-        if (songId != null) #songId: songId
+        if (fresh != null) #fresh: fresh
       }));
   @override
   UserLikedSong $make(CopyWithData data) => UserLikedSong(
       id: data.get(#id, or: $value.id),
+      userId: data.get(#userId, or: $value.userId),
+      songId: data.get(#songId, or: $value.songId),
       created: data.get(#created, or: $value.created),
       updated: data.get(#updated, or: $value.updated),
       deleted: data.get(#deleted, or: $value.deleted),
       synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      userId: data.get(#userId, or: $value.userId),
-      songId: data.get(#songId, or: $value.songId));
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   UserLikedSongCopyWith<$R2, UserLikedSong, $Out2> $chain<$R2, $Out2>(
@@ -2222,6 +2041,12 @@ class UserFollowerMapper extends ClassMapperBase<UserFollower> {
 
   static String _$id(UserFollower v) => v.id;
   static const Field<UserFollower, String> _f$id = Field('id', _$id);
+  static String _$userId(UserFollower v) => v.userId;
+  static const Field<UserFollower, String> _f$userId =
+      Field('userId', _$userId, key: 'user_id');
+  static String _$targetUserId(UserFollower v) => v.targetUserId;
+  static const Field<UserFollower, String> _f$targetUserId =
+      Field('targetUserId', _$targetUserId, key: 'target_user_id');
   static DateTime _$created(UserFollower v) => v.created;
   static const Field<UserFollower, DateTime> _f$created =
       Field('created', _$created);
@@ -2235,35 +2060,29 @@ class UserFollowerMapper extends ClassMapperBase<UserFollower> {
   static const Field<UserFollower, bool> _f$synced = Field('synced', _$synced);
   static bool _$fresh(UserFollower v) => v.fresh;
   static const Field<UserFollower, bool> _f$fresh = Field('fresh', _$fresh);
-  static String _$userId(UserFollower v) => v.userId;
-  static const Field<UserFollower, String> _f$userId =
-      Field('userId', _$userId, key: 'user_id');
-  static String _$targetUserId(UserFollower v) => v.targetUserId;
-  static const Field<UserFollower, String> _f$targetUserId =
-      Field('targetUserId', _$targetUserId, key: 'target_user_id');
 
   @override
   final MappableFields<UserFollower> fields = const {
     #id: _f$id,
+    #userId: _f$userId,
+    #targetUserId: _f$targetUserId,
     #created: _f$created,
     #updated: _f$updated,
     #deleted: _f$deleted,
     #synced: _f$synced,
     #fresh: _f$fresh,
-    #userId: _f$userId,
-    #targetUserId: _f$targetUserId,
   };
 
   static UserFollower _instantiate(DecodingData data) {
     return UserFollower(
         id: data.dec(_f$id),
+        userId: data.dec(_f$userId),
+        targetUserId: data.dec(_f$targetUserId),
         created: data.dec(_f$created),
         updated: data.dec(_f$updated),
         deleted: data.dec(_f$deleted),
         synced: data.dec(_f$synced),
-        fresh: data.dec(_f$fresh),
-        userId: data.dec(_f$userId),
-        targetUserId: data.dec(_f$targetUserId));
+        fresh: data.dec(_f$fresh));
   }
 
   @override
@@ -2321,13 +2140,13 @@ abstract class UserFollowerCopyWith<$R, $In extends UserFollower, $Out>
   @override
   $R call(
       {String? id,
+      String? userId,
+      String? targetUserId,
       DateTime? created,
       DateTime? updated,
       bool? deleted,
       bool? synced,
-      bool? fresh,
-      String? userId,
-      String? targetUserId});
+      bool? fresh});
   UserFollowerCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -2342,36 +2161,222 @@ class _UserFollowerCopyWithImpl<$R, $Out>
   @override
   $R call(
           {String? id,
+          String? userId,
+          String? targetUserId,
           DateTime? created,
           DateTime? updated,
           bool? deleted,
           bool? synced,
-          bool? fresh,
-          String? userId,
-          String? targetUserId}) =>
+          bool? fresh}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
+        if (userId != null) #userId: userId,
+        if (targetUserId != null) #targetUserId: targetUserId,
         if (created != null) #created: created,
         if (updated != null) #updated: updated,
         if (deleted != null) #deleted: deleted,
         if (synced != null) #synced: synced,
-        if (fresh != null) #fresh: fresh,
-        if (userId != null) #userId: userId,
-        if (targetUserId != null) #targetUserId: targetUserId
+        if (fresh != null) #fresh: fresh
       }));
   @override
   UserFollower $make(CopyWithData data) => UserFollower(
       id: data.get(#id, or: $value.id),
+      userId: data.get(#userId, or: $value.userId),
+      targetUserId: data.get(#targetUserId, or: $value.targetUserId),
       created: data.get(#created, or: $value.created),
       updated: data.get(#updated, or: $value.updated),
       deleted: data.get(#deleted, or: $value.deleted),
       synced: data.get(#synced, or: $value.synced),
-      fresh: data.get(#fresh, or: $value.fresh),
-      userId: data.get(#userId, or: $value.userId),
-      targetUserId: data.get(#targetUserId, or: $value.targetUserId));
+      fresh: data.get(#fresh, or: $value.fresh));
 
   @override
   UserFollowerCopyWith<$R2, UserFollower, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
       _UserFollowerCopyWithImpl($value, $cast, t);
+}
+
+class ChangMapper extends ClassMapperBase<Chang> {
+  ChangMapper._();
+
+  static ChangMapper? _instance;
+  static ChangMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = ChangMapper._());
+      PBBaseMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'Chang';
+
+  static String _$id(Chang v) => v.id;
+  static const Field<Chang, String> _f$id = Field('id', _$id);
+  static String _$collectionId(Chang v) => v.collectionId;
+  static const Field<Chang, String> _f$collectionId =
+      Field('collectionId', _$collectionId, key: 'collection_id');
+  static String? _$collectionName(Chang v) => v.collectionName;
+  static const Field<Chang, String> _f$collectionName = Field(
+      'collectionName', _$collectionName,
+      key: 'collection_name', opt: true);
+  static String _$recordId(Chang v) => v.recordId;
+  static const Field<Chang, String> _f$recordId =
+      Field('recordId', _$recordId, key: 'record_id');
+  static String? _$recordData(Chang v) => v.recordData;
+  static const Field<Chang, String> _f$recordData =
+      Field('recordData', _$recordData, key: 'record_data', opt: true);
+  static String _$action(Chang v) => v.action;
+  static const Field<Chang, String> _f$action = Field('action', _$action);
+  static DateTime _$created(Chang v) => v.created;
+  static const Field<Chang, DateTime> _f$created = Field('created', _$created);
+  static DateTime _$updated(Chang v) => v.updated;
+  static const Field<Chang, DateTime> _f$updated = Field('updated', _$updated);
+  static bool _$deleted(Chang v) => v.deleted;
+  static const Field<Chang, bool> _f$deleted = Field('deleted', _$deleted);
+  static bool _$synced(Chang v) => v.synced;
+  static const Field<Chang, bool> _f$synced = Field('synced', _$synced);
+  static bool _$fresh(Chang v) => v.fresh;
+  static const Field<Chang, bool> _f$fresh = Field('fresh', _$fresh);
+
+  @override
+  final MappableFields<Chang> fields = const {
+    #id: _f$id,
+    #collectionId: _f$collectionId,
+    #collectionName: _f$collectionName,
+    #recordId: _f$recordId,
+    #recordData: _f$recordData,
+    #action: _f$action,
+    #created: _f$created,
+    #updated: _f$updated,
+    #deleted: _f$deleted,
+    #synced: _f$synced,
+    #fresh: _f$fresh,
+  };
+
+  static Chang _instantiate(DecodingData data) {
+    return Chang(
+        id: data.dec(_f$id),
+        collectionId: data.dec(_f$collectionId),
+        collectionName: data.dec(_f$collectionName),
+        recordId: data.dec(_f$recordId),
+        recordData: data.dec(_f$recordData),
+        action: data.dec(_f$action),
+        created: data.dec(_f$created),
+        updated: data.dec(_f$updated),
+        deleted: data.dec(_f$deleted),
+        synced: data.dec(_f$synced),
+        fresh: data.dec(_f$fresh));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static Chang fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Chang>(map);
+  }
+
+  static Chang fromJson(String json) {
+    return ensureInitialized().decodeJson<Chang>(json);
+  }
+}
+
+mixin ChangMappable {
+  String toJson() {
+    return ChangMapper.ensureInitialized().encodeJson<Chang>(this as Chang);
+  }
+
+  Map<String, dynamic> toMap() {
+    return ChangMapper.ensureInitialized().encodeMap<Chang>(this as Chang);
+  }
+
+  ChangCopyWith<Chang, Chang, Chang> get copyWith =>
+      _ChangCopyWithImpl(this as Chang, $identity, $identity);
+  @override
+  String toString() {
+    return ChangMapper.ensureInitialized().stringifyValue(this as Chang);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return ChangMapper.ensureInitialized().equalsValue(this as Chang, other);
+  }
+
+  @override
+  int get hashCode {
+    return ChangMapper.ensureInitialized().hashValue(this as Chang);
+  }
+}
+
+extension ChangValueCopy<$R, $Out> on ObjectCopyWith<$R, Chang, $Out> {
+  ChangCopyWith<$R, Chang, $Out> get $asChang =>
+      $base.as((v, t, t2) => _ChangCopyWithImpl(v, t, t2));
+}
+
+abstract class ChangCopyWith<$R, $In extends Chang, $Out>
+    implements PBBaseCopyWith<$R, $In, $Out> {
+  @override
+  $R call(
+      {String? id,
+      String? collectionId,
+      String? collectionName,
+      String? recordId,
+      String? recordData,
+      String? action,
+      DateTime? created,
+      DateTime? updated,
+      bool? deleted,
+      bool? synced,
+      bool? fresh});
+  ChangCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _ChangCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Chang, $Out>
+    implements ChangCopyWith<$R, Chang, $Out> {
+  _ChangCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<Chang> $mapper = ChangMapper.ensureInitialized();
+  @override
+  $R call(
+          {String? id,
+          String? collectionId,
+          Object? collectionName = $none,
+          String? recordId,
+          Object? recordData = $none,
+          String? action,
+          DateTime? created,
+          DateTime? updated,
+          bool? deleted,
+          bool? synced,
+          bool? fresh}) =>
+      $apply(FieldCopyWithData({
+        if (id != null) #id: id,
+        if (collectionId != null) #collectionId: collectionId,
+        if (collectionName != $none) #collectionName: collectionName,
+        if (recordId != null) #recordId: recordId,
+        if (recordData != $none) #recordData: recordData,
+        if (action != null) #action: action,
+        if (created != null) #created: created,
+        if (updated != null) #updated: updated,
+        if (deleted != null) #deleted: deleted,
+        if (synced != null) #synced: synced,
+        if (fresh != null) #fresh: fresh
+      }));
+  @override
+  Chang $make(CopyWithData data) => Chang(
+      id: data.get(#id, or: $value.id),
+      collectionId: data.get(#collectionId, or: $value.collectionId),
+      collectionName: data.get(#collectionName, or: $value.collectionName),
+      recordId: data.get(#recordId, or: $value.recordId),
+      recordData: data.get(#recordData, or: $value.recordData),
+      action: data.get(#action, or: $value.action),
+      created: data.get(#created, or: $value.created),
+      updated: data.get(#updated, or: $value.updated),
+      deleted: data.get(#deleted, or: $value.deleted),
+      synced: data.get(#synced, or: $value.synced),
+      fresh: data.get(#fresh, or: $value.fresh));
+
+  @override
+  ChangCopyWith<$R2, Chang, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+      _ChangCopyWithImpl($value, $cast, t);
 }

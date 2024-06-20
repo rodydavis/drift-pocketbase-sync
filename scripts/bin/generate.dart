@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:recase/recase.dart';
 
+const dateFunc = "now()"; // datetime('now')
+const idFunc = "newId()";
+
 void main(List<String> args) async {
   const username = String.fromEnvironment('ADMIN_USERNAME');
   const password = String.fromEnvironment('ADMIN_PASSWORD');
@@ -57,12 +60,16 @@ Iterable<String> createDriftFile(List<CollectionModel> collections) sync* {
         if (field.required) {
           sb.write(' NOT NULL');
         }
-        if (field == "id") {
+        if (field.name == "id") {
           sb.write(" PRIMARY KEY");
         }
-        if (field.options['default_value'] != null) {
+        if (field.options['default_value'] != null || field.name == 'id') {
           sb.write(' DEFAULT (');
-          sb.write(field.options['default_value'].toString());
+          if (field.name == 'id') {
+            sb.write('$idFunc');
+          } else {
+            sb.write(field.options['default_value'].toString());
+          }
           sb.write(')');
         }
         if (field.type == "relation") {
@@ -106,12 +113,6 @@ Iterable<String> createDriftFile(List<CollectionModel> collections) sync* {
       yield "${name}GetUnsynced:";
       yield "SELECT * FROM ${escapeName(col.name)}";
       yield "WHERE synced = false;";
-      yield '';
-      yield "${name}GetFreshest:";
-      yield "SELECT * FROM ${escapeName(col.name)}";
-      yield "WHERE synced = true";
-      yield "ORDER BY updated DESC";
-      yield "LIMIT 1;";
     }
     if (col.type != 'view') {
       // Delete one
@@ -159,77 +160,62 @@ Iterable<String> createDriftFile(List<CollectionModel> collections) sync* {
       yield '';
       yield "${name}Insert:";
       yield "INSERT INTO ${escapeName(col.name)} (";
-      for (var i = 0; i < col.fields.length; i++) {
-        final field = col.fields[i];
-        yield "  ${escapeName(field.name)}" +
-            (i == col.fields.length - 1 ? '' : ',');
+      for (var i = 0; i < col.coreFields.length; i++) {
+        final field = col.coreFields[i];
+        yield "  ${escapeName(field.name)},";
       }
+      yield '  synced,';
+      yield '  fresh,';
+      yield '  created,';
+      yield '  updated';
       yield ")";
       yield "VALUES(";
-      for (var i = 0; i < col.fields.length; i++) {
-        final field = col.fields[i];
-        String out = "  ";
-        if (field.name == 'synced' || field.name == "deleted") {
-          out += "false";
-        } else {
-          out += ":${varName(field.name)}";
-        }
-        yield out + (i == col.fields.length - 1 ? '' : ',');
+      for (var i = 0; i < col.coreFields.length; i++) {
+        final field = col.coreFields[i];
+        yield "  :${varName(field.name)},";
       }
+      yield '  false,';
+      yield '  true,';
+      yield "  $dateFunc,";
+      yield "  $dateFunc";
       yield ") RETURNING *;";
-      // Insert one record
+      // Insert one with id
       yield '';
-      yield "${name}InsertRecord(:data AS TEXT):";
-      yield "INSERT INTO ${escapeName(col.name)} (";
-      for (var i = 0; i < col.fields.length; i++) {
-        final field = col.fields[i];
-        yield "  ${escapeName(field.name)}" +
-            (i == col.fields.length - 1 ? '' : ',');
+      yield "${name}InsertWithId:";
+      yield "INSERT OR REPLACE INTO ${escapeName(col.name)} (";
+      yield '  id,';
+      for (var i = 0; i < col.coreFields.length; i++) {
+        final field = col.coreFields[i];
+        yield "  ${escapeName(field.name)},";
       }
+      yield '  synced,';
+      yield '  fresh,';
+      yield '  created,';
+      yield '  updated';
       yield ")";
       yield "VALUES(";
-      for (var i = 0; i < col.fields.length; i++) {
-        final field = col.fields[i];
-        String out = "  ";
-        if (field.name == 'synced' || field.name == "deleted") {
-          out += "false";
-        } else {
-          out += "json_extract(:data, '\$.${field.name}')";
-        }
-        yield out + (i == col.fields.length - 1 ? '' : ',');
+      yield '  :id,';
+      for (var i = 0; i < col.coreFields.length; i++) {
+        final field = col.coreFields[i];
+        yield "  :${varName(field.name)},";
       }
+      yield '  false,';
+      yield '  true,';
+      yield "  $dateFunc,";
+      yield "  $dateFunc";
       yield ") RETURNING *;";
       // Update one
       yield '';
       yield "${name}Update:";
       yield "UPDATE ${escapeName(col.name)} SET";
-      for (var i = 0; i < col.fields.length; i++) {
-        final field = col.fields[i];
-        String out = "  ";
-        if (field.name == 'synced') {
-          out += "${escapeName(field.name)} = false";
-        } else {
-          out += "${escapeName(field.name)} = :${varName(field.name)}";
-        }
-        yield out + (i == col.fields.length - 1 ? '' : ',');
+      for (var i = 0; i < col.coreFields.length; i++) {
+        final field = col.coreFields[i];
+        yield "  ${escapeName(field.name)} = :${varName(field.name)},";
       }
+      yield '  synced = false,';
+      yield '  fresh = false,';
+      yield "  updated = $dateFunc";
       yield "WHERE id = :id;";
-      // Update one record
-      yield '';
-      yield "${name}UpdateRecord(:data AS TEXT):";
-      yield "UPDATE ${escapeName(col.name)} SET";
-      for (var i = 0; i < col.fields.length; i++) {
-        final field = col.fields[i];
-        String out = "  ";
-        if (field.name == 'synced') {
-          out += "${escapeName(field.name)} = false";
-        } else {
-          out +=
-              "${escapeName(field.name)} = json_extract(:data, '\$.${field.name}')";
-        }
-        yield out + (i == col.fields.length - 1 ? '' : ',');
-      }
-      yield "WHERE id = json_extract(:data, '\$.id');";
     }
   }
   yield '';
@@ -359,6 +345,40 @@ Iterable<String> createClasses(List<CollectionModel> collections) sync* {
 }
 
 extension on CollectionModel {
+  List<SchemaField> get coreFields {
+    final fields = <SchemaField>[];
+    if (type == "auth") {
+      fields.addAll([
+        SchemaField(
+          id: 'username',
+          name: 'username',
+          type: 'text',
+          required: false,
+        ),
+        SchemaField(
+          id: 'email',
+          name: 'email',
+          type: 'text',
+          required: true,
+        ),
+        SchemaField(
+          id: 'emailVisibility',
+          name: 'emailVisibility',
+          type: 'bool',
+          required: false,
+        ),
+        SchemaField(
+          id: 'verified',
+          name: 'verified',
+          type: 'bool',
+          required: false,
+        ),
+      ]);
+    }
+    fields.addAll(schema.toList());
+    return fields;
+  }
+
   List<SchemaField> get fields {
     final fields = <SchemaField>[];
     fields.add(
@@ -369,6 +389,7 @@ extension on CollectionModel {
         required: true,
       ),
     );
+    fields.addAll(coreFields);
     if (type == "base" || type == "auth") {
       fields.addAll([
         SchemaField(
@@ -416,35 +437,6 @@ extension on CollectionModel {
         ),
       ]);
     }
-    if (type == "auth") {
-      fields.addAll([
-        SchemaField(
-          id: 'username',
-          name: 'username',
-          type: 'text',
-          required: false,
-        ),
-        SchemaField(
-          id: 'email',
-          name: 'email',
-          type: 'text',
-          required: true,
-        ),
-        SchemaField(
-          id: 'emailVisibility',
-          name: 'emailVisibility',
-          type: 'bool',
-          required: false,
-        ),
-        SchemaField(
-          id: 'verified',
-          name: 'verified',
-          type: 'bool',
-          required: false,
-        ),
-      ]);
-    }
-    fields.addAll(schema.toList());
     return fields;
   }
 }

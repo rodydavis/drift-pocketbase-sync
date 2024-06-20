@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"golang.org/x/exp/slices"
@@ -25,7 +24,7 @@ import (
 	"github.com/pocketbase/pocketbase/tools/cron"
 )
 
-const DeletedRecordsCollection = "deleted_records"
+const ModifiedRecordsCollection = "changes"
 
 func main() {
 	app := pocketbase.New()
@@ -112,43 +111,21 @@ func main() {
 		})
 		scheduler.Start()
 
-		collections := []*models.Collection{}
-		userCollections := []*models.Collection{}
-		collectionsQuery := app.Dao().CollectionQuery()
-		if err := collectionsQuery.All(&collections); err != nil {
-			fmt.Print(err)
-			return nil
-		}
-
-		for _, col := range collections {
-			if strings.HasPrefix(col.Name, "user_") {
-				userCollections = append(userCollections, col)
-			}
-		}
-
 		app.OnRecordAfterCreateRequest().Add(func(e *core.RecordCreateEvent) error {
-			if !isUserCollection(userCollections, e.Collection) {
-				return nil
-			}
-			return addUserActivityTracker(app, "create", e.Collection, e.Record)
+			return addModelTracker(app, "create", e.Collection, e.Record)
 		})
 
-		app.OnRecordAfterUpdateRequest().Add(func(e *core.RecordUpdateEvent) error {
-			if !isUserCollection(userCollections, e.Collection) {
-				return nil
-			}
-			return addUserActivityTracker(app, "update", e.Collection, e.Record)
+		app.OnRecordBeforeUpdateRequest().Add(func(e *core.RecordUpdateEvent) error {
+			return addModelTracker(app, "update", e.Collection, e.Record)
 		})
 
-		app.OnRecordAfterDeleteRequest().Add(func(e *core.RecordDeleteEvent) error {
-			if !isUserCollection(userCollections, e.Collection) {
-				return nil
-			}
-			return addUserActivityTracker(app, "delete", e.Collection, e.Record)
+		app.OnRecordBeforeDeleteRequest().Add(func(e *core.RecordDeleteEvent) error {
+			return addModelTracker(app, "delete", e.Collection, e.Record)
 		})
 
 		e.Router.DELETE("/api/remove-deleted-records", func(c echo.Context) error {
-			query := e.App.Dao().RecordQuery(DeletedRecordsCollection)
+			query := e.App.Dao().
+				RecordQuery(ModifiedRecordsCollection)
 
 			records := []*models.Record{}
 			if err := query.All(&records); err != nil {
@@ -167,63 +144,22 @@ func main() {
 		return nil
 	})
 
-	// Helper hook that keeps a record of the deleted data as an alternative to soft deletes
-	// Inspiration: https://brandur.org/fragments/deleted-record-insert
-	app.OnRecordBeforeDeleteRequest().Add(func(e *core.RecordDeleteEvent) error {
-		CollectionName := DeletedRecordsCollection
-
-		// Add other collection names here where you don't want to keep a copy of the deleted record
-		excludedCollections := []string{
-			CollectionName,
-		}
-
-		// Skip if the record is already deleted or in excluded collections
-		if slices.Contains(excludedCollections, e.Collection.Name) {
-			return nil
-		}
-
-		collection, err := app.Dao().FindCollectionByNameOrId(CollectionName)
-		if err != nil {
-			return err
-		}
-
-		record := models.NewRecord(collection)
-
-		form := forms.NewRecordUpsert(app, record)
-		form.LoadData(map[string]any{
-			"collection_id": e.Collection.Id,
-			"record_id":     e.Record.Id,
-			"record_data":   e.Record,
-		})
-
-		return form.Submit()
-	})
-
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func isUserCollection(collections []*models.Collection, collection *models.Collection) bool {
-	for _, col := range collections {
-		if col.Id == collection.Id {
-			return true
-		}
-	}
-	return false
-}
-
-func addUserActivityTracker(
+func addModelTracker(
 	app *pocketbase.PocketBase,
 	method string,
 	Collection *models.Collection,
 	Record *models.Record,
 ) error {
-	CollectionName := "user_activity"
+	CollectionName := ModifiedRecordsCollection
 
 	excludedCollections := []string{
 		CollectionName,
-		DeletedRecordsCollection,
+		ModifiedRecordsCollection,
 	}
 
 	if slices.Contains(excludedCollections, Collection.Name) {
@@ -241,13 +177,21 @@ func addUserActivityTracker(
 
 	record := models.NewRecord(collection)
 
+	// if method == "update" {
+	// 	current, err := app.Dao().FindRecordById(Collection.Id, Record.Id)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	// TODO: Delta changes
+	// }
+
 	form := forms.NewRecordUpsert(app, record)
 	form.LoadData(map[string]any{
-		"user_id":       Record.GetString("user_id"),
-		"collection_id": Record.GetString("collection_id"),
-		"record_id":     Record.Id,
-		"record_data":   Record,
-		"type":          method,
+		"collection_id":   Collection.Id,
+		"collection_name": Collection.Name,
+		"record_id":       Record.Id,
+		"record_data":     Record,
+		"action":          method,
 	})
 
 	return form.Submit()
@@ -261,7 +205,7 @@ func removeOldDeletedRecords(e *core.ServeEvent, days int) {
 	date := fmt.Sprintf("%d-%02d-%02d", t.Year(), t.Month(), t.Day())
 
 	records := []*models.Record{}
-	query := e.App.Dao().RecordQuery(DeletedRecordsCollection).
+	query := e.App.Dao().RecordQuery(ModifiedRecordsCollection).
 		AndWhere(dbx.NewExp("updated = {:date}", dbx.Params{"date": date}))
 	if err := query.All(&records); err != nil {
 		e.App.Logger().Error("Could not fetch deleted records", err)

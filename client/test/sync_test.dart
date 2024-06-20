@@ -1,7 +1,7 @@
+import 'package:client/db/connection/connect.dart';
 import 'package:client/db/database.dart';
 import 'package:client/db/sql/generated.dart';
 import 'package:client/db/sync.dart';
-import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pocketbase/pocketbase.dart';
 
@@ -25,7 +25,7 @@ void main() {
     }
 
     setUp(() async {
-      db = Database(NativeDatabase.memory());
+      db = createMemoryDatabase();
       pb = PocketBase("http://127.0.0.1:8090");
       service = SyncService(db, pb);
       await pb.admins.authWithPassword("admin@email.com", "admin123456");
@@ -115,7 +115,7 @@ void main() {
         expect(songs.isNotEmpty, true);
         expect(song.name, 'Track 1');
 
-        await updateDbSong(db, song, 'Track 2');
+        await updateDbSong(db, song.copyWith(name: 'Track 2'));
 
         songs = await db.songsGetAll().get();
         song = songs.first;
@@ -212,7 +212,7 @@ void main() {
         expect(song.fresh, false);
         expect(song.synced, true);
 
-        await updateDbSong(db, song, 'Track 2');
+        await updateDbSong(db, song.copyWith(name: 'Track 2'));
         dbSongs = await db.songsGetAll().get();
         song = dbSongs.first;
         remoteSongs = await col.getFullList();
@@ -221,7 +221,7 @@ void main() {
         expect(song.name, 'Track 2');
         expect(song.fresh, false);
         expect(song.synced, false);
-        expect(remoteSong.data['name'], 'Track 1');
+        expect(remoteSong.getStringValue('name'), 'Track 1');
 
         await service.syncCollections();
 
@@ -237,7 +237,7 @@ void main() {
       });
 
       test('Remote edits should update existing local records', () async {
-        final id = db.newId();
+        final id = Database.newId();
         await createRemoteSong(pb, 'Track 1', id: id);
         await service.syncCollections();
 
@@ -258,8 +258,9 @@ void main() {
       });
 
       test('Local edits that are newer will override remote', () async {
-        final id = db.newId();
+        final id = Database.newId();
         await createRemoteSong(pb, 'Track 1', id: id);
+
         await service.syncCollections();
 
         var songs = await db.songsGetAll().get();
@@ -268,11 +269,16 @@ void main() {
         expect(song.id, id);
         expect(song.name, 'Track 1');
 
-        await updateDbSong(db, song, 'Track 2');
+        await updateDbSong(db, song.copyWith(name: 'Track 2'));
+        songs = await db.songsGetAll().get();
+        song = songs.first;
+
+        expect(songs.length, 1);
+        expect(song.name, 'Track 2');
+
         var remoteSong = await pb //
             .collection(Collections.songs.id)
-            .getFullList()
-            .then((v) => v.first);
+            .getOne(id);
 
         expect(song.id, remoteSong.id);
         expect(remoteSong.getStringValue('name'), 'Track 1');
@@ -283,16 +289,17 @@ void main() {
         song = songs.first;
         remoteSong = await pb //
             .collection(Collections.songs.id)
-            .getFullList()
-            .then((v) => v.first);
+            .getOne(id);
 
+        expect(songs.length, 1);
         expect(song.id, id);
-        expect(song.name, 'Track 2');
+        expect(song.id, remoteSong.id);
         expect(remoteSong.getStringValue('name'), 'Track 2');
+        expect(song.name, 'Track 2');
       });
 
       test('Local edits that are older will be overridden by remote', () async {
-        final id = db.newId();
+        final id = Database.newId();
         await createRemoteSong(pb, 'Track 1', id: id);
         await service.syncCollections();
 
@@ -302,7 +309,7 @@ void main() {
         expect(song.id, id);
         expect(song.name, 'Track 1');
 
-        await updateDbSong(db, song, 'Track 2');
+        await updateDbSong(db, song.copyWith(name: 'Track 2'));
         await updateRemoteSong(pb, song.id, 'Track 3');
         var remoteSong = await pb //
             .collection(Collections.songs.id)
@@ -331,7 +338,7 @@ void main() {
       });
 
       test('Remote deletes will override any local edits', () async {
-        final id = db.newId();
+        final id = Database.newId();
         await createRemoteSong(pb, 'Track 1', id: id);
         await service.syncCollections();
 
@@ -347,7 +354,7 @@ void main() {
 
         songs = await db.songsGetAll().get();
         final rd = await pb //
-            .collection(Collections.deletedRecords.id)
+            .collection(Collections.changes.id)
             .getFullList();
 
         expect(songs.isEmpty, true);
@@ -365,28 +372,21 @@ Future<Song> createDbSong(
   String? id,
 }) async {
   return await db
-      .songsInsert(
-        id: id ?? db.newId(),
-        created: DateTime.now(),
-        updated: DateTime.now(),
-        fresh: true,
+      .songsInsertWithId(
+        id: id ?? Database.newId(),
         name: name,
       )
       .then((e) => e.first);
 }
 
-Future<Song> updateDbSong(Database db, Song song, String name) async {
+Future<Song> updateDbSong(Database db, Song song) async {
   await db.songsUpdate(
     id: song.id,
-    created: song.created,
-    updated: DateTime.now(),
-    fresh: false,
-    deleted: song.deleted,
-    name: name,
-    artistId: song.artistId,
-    downloadLink: song.downloadLink,
+    name: song.name,
+    // artistId: song.artistId,
+    // downloadLink: song.downloadLink,
   );
-  return song.copyWith(name: name);
+  return song;
 }
 
 Future<RecordModel> createRemoteSong(

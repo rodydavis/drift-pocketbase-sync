@@ -12,8 +12,8 @@ Map<Collections, TableInfo<Table, PBCollection>> createMapper(Database db) {
     Collections.songs: db.songs,
     Collections.artists: db.artists,
     Collections.userActivity: db.userActivity,
-    Collections.deletedRecords: db.deletedRecords,
     Collections.userLikedSongs: db.userLikedSongs,
     Collections.userFollowers: db.userFollowers,
+    Collections.changes: db.changes,
   };
 }

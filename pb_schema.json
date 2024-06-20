@@ -6,8 +6,8 @@
     "system": false,
     "schema": [],
     "indexes": [],
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -138,8 +138,8 @@
       }
     ],
     "indexes": [],
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -167,22 +167,22 @@
       }
     ],
     "indexes": [],
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
     "options": {}
   },
   {
-    "id": "2w1uun4pfhprxhd",
-    "name": "deleted_records",
+    "id": "2avocvzobnwvl3x",
+    "name": "changes",
     "type": "base",
     "system": false,
     "schema": [
       {
         "system": false,
-        "id": "vgs5tbhd",
+        "id": "5edjvivi",
         "name": "collection_id",
         "type": "text",
         "required": true,
@@ -196,7 +196,21 @@
       },
       {
         "system": false,
-        "id": "0rhlybev",
+        "id": "dn24mhbb",
+        "name": "collection_name",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "r6zrsib1",
         "name": "record_id",
         "type": "text",
         "required": true,
@@ -210,20 +224,33 @@
       },
       {
         "system": false,
-        "id": "ziwcxjz0",
+        "id": "fpeywwvq",
         "name": "record_data",
         "type": "json",
-        "required": true,
+        "required": false,
         "presentable": false,
         "unique": false,
         "options": {
           "maxSize": 2000000
         }
+      },
+      {
+        "system": false,
+        "id": "nkklfear",
+        "name": "action",
+        "type": "select",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": ["create", "update", "delete"]
+        }
       }
     ],
     "indexes": [],
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -280,8 +307,8 @@
       }
     ],
     "indexes": [],
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -303,7 +330,7 @@
         "unique": false,
         "options": {
           "collectionId": "_pb_users_auth_",
-          "cascadeDelete": false,
+          "cascadeDelete": true,
           "minSelect": null,
           "maxSelect": 1,
           "displayFields": null

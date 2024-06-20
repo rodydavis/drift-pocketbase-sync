@@ -3,139 +3,141 @@ import 'generated.dart';
 -- Tables --
 
 CREATE TABLE "users" (
-    "id" TEXT NOT NULL,
-    "created" DATETIME NOT NULL,
-    "updated" DATETIME NOT NULL,
-    "deleted" BOOLEAN NOT NULL DEFAULT (false),
-    "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
     "username" TEXT,
     "email" TEXT NOT NULL,
     "emailVisibility" BOOLEAN,
     "verified" BOOLEAN,
     "name" TEXT,
-    "avatar" TEXT
+    "avatar" TEXT,
+    "created" DATETIME NOT NULL,
+    "updated" DATETIME NOT NULL,
+    "deleted" BOOLEAN NOT NULL DEFAULT (false),
+    "synced" BOOLEAN NOT NULL DEFAULT (false),
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH User;
 
 CREATE TABLE "albums" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
+    "name" TEXT NOT NULL,
     "created" DATETIME NOT NULL,
     "updated" DATETIME NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT (false),
     "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
-    "name" TEXT NOT NULL
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH Album;
 
 CREATE TABLE "album_tracks" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
+    "album_id" TEXT NOT NULL REFERENCES "albums" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    "song_id" TEXT NOT NULL REFERENCES "songs" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    "order" REAL NOT NULL,
     "created" DATETIME NOT NULL,
     "updated" DATETIME NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT (false),
     "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
-    "album_id" TEXT NOT NULL REFERENCES "albums" (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    "song_id" TEXT NOT NULL REFERENCES "songs" (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    "order" REAL NOT NULL
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH AlbumTrack;
 
 CREATE TABLE "user_playlists" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
+    "name" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
     "created" DATETIME NOT NULL,
     "updated" DATETIME NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT (false),
     "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
-    "name" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH UserPlaylist;
 
 CREATE TABLE "user_playlist_items" (
-    "id" TEXT NOT NULL,
-    "created" DATETIME NOT NULL,
-    "updated" DATETIME NOT NULL,
-    "deleted" BOOLEAN NOT NULL DEFAULT (false),
-    "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
     "playlist_id" TEXT NOT NULL REFERENCES "user_playlists" (id) ON DELETE CASCADE ON UPDATE CASCADE,
     "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
     "song_id" TEXT NOT NULL REFERENCES "songs" (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    "order" REAL NOT NULL
+    "order" REAL NOT NULL,
+    "created" DATETIME NOT NULL,
+    "updated" DATETIME NOT NULL,
+    "deleted" BOOLEAN NOT NULL DEFAULT (false),
+    "synced" BOOLEAN NOT NULL DEFAULT (false),
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH UserPlaylistItem;
 
 CREATE TABLE "songs" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
+    "name" TEXT NOT NULL,
+    "download_link" TEXT,
+    "artist_id" TEXT REFERENCES "artists" (id),
     "created" DATETIME NOT NULL,
     "updated" DATETIME NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT (false),
     "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
-    "name" TEXT NOT NULL,
-    "download_link" TEXT,
-    "artist_id" TEXT REFERENCES "artists" (id)
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH Song;
 
 CREATE TABLE "artists" (
-    "id" TEXT NOT NULL,
-    "created" DATETIME NOT NULL,
-    "updated" DATETIME NOT NULL,
-    "deleted" BOOLEAN NOT NULL DEFAULT (false),
-    "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
     "username" TEXT,
     "email" TEXT NOT NULL,
     "emailVisibility" BOOLEAN,
-    "verified" BOOLEAN
-) WITH Artist;
-
-CREATE TABLE "user_activity" (
-    "id" TEXT NOT NULL,
+    "verified" BOOLEAN,
     "created" DATETIME NOT NULL,
     "updated" DATETIME NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT (false),
     "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
-    "user_id" TEXT NOT NULL REFERENCES "users" (id),
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
+) WITH Artist;
+
+CREATE TABLE "user_activity" (
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
+    "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
     "collection_id" TEXT NOT NULL,
     "record_id" TEXT NOT NULL,
     "record_data" TEXT NOT NULL,
     "type" TEXT NOT NULL,
-    "private" BOOLEAN
+    "private" BOOLEAN,
+    "created" DATETIME NOT NULL,
+    "updated" DATETIME NOT NULL,
+    "deleted" BOOLEAN NOT NULL DEFAULT (false),
+    "synced" BOOLEAN NOT NULL DEFAULT (false),
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH UserActivity;
 
-CREATE TABLE "deleted_records" (
-    "id" TEXT NOT NULL,
-    "created" DATETIME NOT NULL,
-    "updated" DATETIME NOT NULL,
-    "deleted" BOOLEAN NOT NULL DEFAULT (false),
-    "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
-    "collection_id" TEXT NOT NULL,
-    "record_id" TEXT NOT NULL,
-    "record_data" TEXT NOT NULL
-) WITH DeletedRecord;
-
 CREATE TABLE "user_liked_songs" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
+    "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    "song_id" TEXT NOT NULL REFERENCES "songs" (id) ON DELETE CASCADE ON UPDATE CASCADE,
     "created" DATETIME NOT NULL,
     "updated" DATETIME NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT (false),
     "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
-    "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    "song_id" TEXT NOT NULL REFERENCES "songs" (id) ON DELETE CASCADE ON UPDATE CASCADE
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH UserLikedSong;
 
 CREATE TABLE "user_followers" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
+    "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    "target_user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
     "created" DATETIME NOT NULL,
     "updated" DATETIME NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT (false),
     "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true),
-    "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    "target_user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH UserFollower;
+
+CREATE TABLE "changes" (
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
+    "collection_id" TEXT NOT NULL,
+    "collection_name" TEXT,
+    "record_id" TEXT NOT NULL,
+    "record_data" TEXT,
+    "action" TEXT NOT NULL,
+    "created" DATETIME NOT NULL,
+    "updated" DATETIME NOT NULL,
+    "deleted" BOOLEAN NOT NULL DEFAULT (false),
+    "synced" BOOLEAN NOT NULL DEFAULT (false),
+    "fresh" BOOLEAN NOT NULL DEFAULT (true)
+) WITH Chang;
 
 -- Indexes --
 
@@ -193,95 +195,70 @@ WHERE id IN :ids;
 
 usersInsert:
 INSERT INTO "users" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "username",
   "email",
   "emailVisibility",
   "verified",
   "name",
-  "avatar"
+  "avatar",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
-  :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :username,
   :email,
   :emailVisibility,
   :verified,
   :name,
-  :avatar
+  :avatar,
+  false,
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
-usersInsertRecord(:data AS TEXT):
-INSERT INTO "users" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
+usersInsertWithId:
+INSERT OR REPLACE INTO "users" (
+  id,
   "username",
   "email",
   "emailVisibility",
   "verified",
   "name",
-  "avatar"
+  "avatar",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :id,
+  :username,
+  :email,
+  :emailVisibility,
+  :verified,
+  :name,
+  :avatar,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.username'),
-  json_extract(:data, '$.email'),
-  json_extract(:data, '$.emailVisibility'),
-  json_extract(:data, '$.verified'),
-  json_extract(:data, '$.name'),
-  json_extract(:data, '$.avatar')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 usersUpdate:
 UPDATE "users" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "username" = :username,
   "email" = :email,
   "emailVisibility" = :emailVisibility,
   "verified" = :verified,
   "name" = :name,
-  "avatar" = :avatar
+  "avatar" = :avatar,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-usersUpdateRecord(:data AS TEXT):
-UPDATE "users" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "username" = json_extract(:data, '$.username'),
-  "email" = json_extract(:data, '$.email'),
-  "emailVisibility" = json_extract(:data, '$.emailVisibility'),
-  "verified" = json_extract(:data, '$.verified'),
-  "name" = json_extract(:data, '$.name'),
-  "avatar" = json_extract(:data, '$.avatar')
-WHERE id = json_extract(:data, '$.id');
 
 albumsGetAll:
 SELECT * FROM "albums";
@@ -293,12 +270,6 @@ WHERE id = :id;
 albumsGetUnsynced:
 SELECT * FROM "albums"
 WHERE synced = false;
-
-albumsGetFreshest:
-SELECT * FROM "albums"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
 
 albumsHardDeleteOne:
 DELETE FROM "albums"
@@ -340,65 +311,45 @@ WHERE id IN :ids;
 
 albumsInsert:
 INSERT INTO "albums" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "name"
+  "name",
+  synced,
+  fresh,
+  created,
+  updated
+)
+VALUES(
+  :name,
+  false,
+  true,
+  now(),
+  now()
+) RETURNING *;
+
+albumsInsertWithId:
+INSERT OR REPLACE INTO "albums" (
+  id,
+  "name",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
   :id,
-  :created,
-  :updated,
+  :name,
   false,
-  false,
-  :fresh,
-  :name
-) RETURNING *;
-
-albumsInsertRecord(:data AS TEXT):
-INSERT INTO "albums" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "name"
-)
-VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
-  false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.name')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 albumsUpdate:
 UPDATE "albums" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
-  "name" = :name
+  "name" = :name,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-albumsUpdateRecord(:data AS TEXT):
-UPDATE "albums" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "name" = json_extract(:data, '$.name')
-WHERE id = json_extract(:data, '$.id');
 
 albumTracksGetAll:
 SELECT * FROM "album_tracks";
@@ -410,12 +361,6 @@ WHERE id = :id;
 albumTracksGetUnsynced:
 SELECT * FROM "album_tracks"
 WHERE synced = false;
-
-albumTracksGetFreshest:
-SELECT * FROM "album_tracks"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
 
 albumTracksHardDeleteOne:
 DELETE FROM "album_tracks"
@@ -457,77 +402,55 @@ WHERE id IN :ids;
 
 albumTracksInsert:
 INSERT INTO "album_tracks" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "album_id",
   "song_id",
-  "order"
+  "order",
+  synced,
+  fresh,
+  created,
+  updated
+)
+VALUES(
+  :albumId,
+  :songId,
+  :order,
+  false,
+  true,
+  now(),
+  now()
+) RETURNING *;
+
+albumTracksInsertWithId:
+INSERT OR REPLACE INTO "album_tracks" (
+  id,
+  "album_id",
+  "song_id",
+  "order",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
   :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :albumId,
   :songId,
-  :order
-) RETURNING *;
-
-albumTracksInsertRecord(:data AS TEXT):
-INSERT INTO "album_tracks" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "album_id",
-  "song_id",
-  "order"
-)
-VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :order,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.album_id'),
-  json_extract(:data, '$.song_id'),
-  json_extract(:data, '$.order')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 albumTracksUpdate:
 UPDATE "album_tracks" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "album_id" = :albumId,
   "song_id" = :songId,
-  "order" = :order
+  "order" = :order,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-albumTracksUpdateRecord(:data AS TEXT):
-UPDATE "album_tracks" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "album_id" = json_extract(:data, '$.album_id'),
-  "song_id" = json_extract(:data, '$.song_id'),
-  "order" = json_extract(:data, '$.order')
-WHERE id = json_extract(:data, '$.id');
 
 userPlaylistsGetAll:
 SELECT * FROM "user_playlists";
@@ -539,12 +462,6 @@ WHERE id = :id;
 userPlaylistsGetUnsynced:
 SELECT * FROM "user_playlists"
 WHERE synced = false;
-
-userPlaylistsGetFreshest:
-SELECT * FROM "user_playlists"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
 
 userPlaylistsHardDeleteOne:
 DELETE FROM "user_playlists"
@@ -586,71 +503,50 @@ WHERE id IN :ids;
 
 userPlaylistsInsert:
 INSERT INTO "user_playlists" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "name",
-  "user_id"
+  "user_id",
+  synced,
+  fresh,
+  created,
+  updated
+)
+VALUES(
+  :name,
+  :userId,
+  false,
+  true,
+  now(),
+  now()
+) RETURNING *;
+
+userPlaylistsInsertWithId:
+INSERT OR REPLACE INTO "user_playlists" (
+  id,
+  "name",
+  "user_id",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
   :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :name,
-  :userId
-) RETURNING *;
-
-userPlaylistsInsertRecord(:data AS TEXT):
-INSERT INTO "user_playlists" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "name",
-  "user_id"
-)
-VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :userId,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.name'),
-  json_extract(:data, '$.user_id')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 userPlaylistsUpdate:
 UPDATE "user_playlists" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "name" = :name,
-  "user_id" = :userId
+  "user_id" = :userId,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-userPlaylistsUpdateRecord(:data AS TEXT):
-UPDATE "user_playlists" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "name" = json_extract(:data, '$.name'),
-  "user_id" = json_extract(:data, '$.user_id')
-WHERE id = json_extract(:data, '$.id');
 
 userPlaylistItemsGetAll:
 SELECT * FROM "user_playlist_items";
@@ -662,12 +558,6 @@ WHERE id = :id;
 userPlaylistItemsGetUnsynced:
 SELECT * FROM "user_playlist_items"
 WHERE synced = false;
-
-userPlaylistItemsGetFreshest:
-SELECT * FROM "user_playlist_items"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
 
 userPlaylistItemsHardDeleteOne:
 DELETE FROM "user_playlist_items"
@@ -709,83 +599,60 @@ WHERE id IN :ids;
 
 userPlaylistItemsInsert:
 INSERT INTO "user_playlist_items" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "playlist_id",
   "user_id",
   "song_id",
-  "order"
+  "order",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
-  :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :playlistId,
   :userId,
   :songId,
-  :order
+  :order,
+  false,
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
-userPlaylistItemsInsertRecord(:data AS TEXT):
-INSERT INTO "user_playlist_items" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
+userPlaylistItemsInsertWithId:
+INSERT OR REPLACE INTO "user_playlist_items" (
+  id,
   "playlist_id",
   "user_id",
   "song_id",
-  "order"
+  "order",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :id,
+  :playlistId,
+  :userId,
+  :songId,
+  :order,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.playlist_id'),
-  json_extract(:data, '$.user_id'),
-  json_extract(:data, '$.song_id'),
-  json_extract(:data, '$.order')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 userPlaylistItemsUpdate:
 UPDATE "user_playlist_items" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "playlist_id" = :playlistId,
   "user_id" = :userId,
   "song_id" = :songId,
-  "order" = :order
+  "order" = :order,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-userPlaylistItemsUpdateRecord(:data AS TEXT):
-UPDATE "user_playlist_items" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "playlist_id" = json_extract(:data, '$.playlist_id'),
-  "user_id" = json_extract(:data, '$.user_id'),
-  "song_id" = json_extract(:data, '$.song_id'),
-  "order" = json_extract(:data, '$.order')
-WHERE id = json_extract(:data, '$.id');
 
 songsGetAll:
 SELECT * FROM "songs";
@@ -797,12 +664,6 @@ WHERE id = :id;
 songsGetUnsynced:
 SELECT * FROM "songs"
 WHERE synced = false;
-
-songsGetFreshest:
-SELECT * FROM "songs"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
 
 songsHardDeleteOne:
 DELETE FROM "songs"
@@ -844,77 +705,55 @@ WHERE id IN :ids;
 
 songsInsert:
 INSERT INTO "songs" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "name",
   "download_link",
-  "artist_id"
+  "artist_id",
+  synced,
+  fresh,
+  created,
+  updated
+)
+VALUES(
+  :name,
+  :downloadLink,
+  :artistId,
+  false,
+  true,
+  now(),
+  now()
+) RETURNING *;
+
+songsInsertWithId:
+INSERT OR REPLACE INTO "songs" (
+  id,
+  "name",
+  "download_link",
+  "artist_id",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
   :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :name,
   :downloadLink,
-  :artistId
-) RETURNING *;
-
-songsInsertRecord(:data AS TEXT):
-INSERT INTO "songs" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "name",
-  "download_link",
-  "artist_id"
-)
-VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :artistId,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.name'),
-  json_extract(:data, '$.download_link'),
-  json_extract(:data, '$.artist_id')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 songsUpdate:
 UPDATE "songs" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "name" = :name,
   "download_link" = :downloadLink,
-  "artist_id" = :artistId
+  "artist_id" = :artistId,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-songsUpdateRecord(:data AS TEXT):
-UPDATE "songs" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "name" = json_extract(:data, '$.name'),
-  "download_link" = json_extract(:data, '$.download_link'),
-  "artist_id" = json_extract(:data, '$.artist_id')
-WHERE id = json_extract(:data, '$.id');
 
 artistsGetAll:
 SELECT * FROM "artists";
@@ -963,83 +802,60 @@ WHERE id IN :ids;
 
 artistsInsert:
 INSERT INTO "artists" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "username",
   "email",
   "emailVisibility",
-  "verified"
+  "verified",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
-  :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :username,
   :email,
   :emailVisibility,
-  :verified
+  :verified,
+  false,
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
-artistsInsertRecord(:data AS TEXT):
-INSERT INTO "artists" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
+artistsInsertWithId:
+INSERT OR REPLACE INTO "artists" (
+  id,
   "username",
   "email",
   "emailVisibility",
-  "verified"
+  "verified",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :id,
+  :username,
+  :email,
+  :emailVisibility,
+  :verified,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.username'),
-  json_extract(:data, '$.email'),
-  json_extract(:data, '$.emailVisibility'),
-  json_extract(:data, '$.verified')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 artistsUpdate:
 UPDATE "artists" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "username" = :username,
   "email" = :email,
   "emailVisibility" = :emailVisibility,
-  "verified" = :verified
+  "verified" = :verified,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-artistsUpdateRecord(:data AS TEXT):
-UPDATE "artists" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "username" = json_extract(:data, '$.username'),
-  "email" = json_extract(:data, '$.email'),
-  "emailVisibility" = json_extract(:data, '$.emailVisibility'),
-  "verified" = json_extract(:data, '$.verified')
-WHERE id = json_extract(:data, '$.id');
 
 userActivityGetAll:
 SELECT * FROM "user_activity";
@@ -1051,12 +867,6 @@ WHERE id = :id;
 userActivityGetUnsynced:
 SELECT * FROM "user_activity"
 WHERE synced = false;
-
-userActivityGetFreshest:
-SELECT * FROM "user_activity"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
 
 userActivityHardDeleteOne:
 DELETE FROM "user_activity"
@@ -1098,224 +908,70 @@ WHERE id IN :ids;
 
 userActivityInsert:
 INSERT INTO "user_activity" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "user_id",
   "collection_id",
   "record_id",
   "record_data",
   "type",
-  "private"
+  "private",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
-  :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :userId,
   :collectionId,
   :recordId,
   :recordData,
   :type,
-  :private
+  :private,
+  false,
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
-userActivityInsertRecord(:data AS TEXT):
-INSERT INTO "user_activity" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
+userActivityInsertWithId:
+INSERT OR REPLACE INTO "user_activity" (
+  id,
   "user_id",
   "collection_id",
   "record_id",
   "record_data",
   "type",
-  "private"
+  "private",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :id,
+  :userId,
+  :collectionId,
+  :recordId,
+  :recordData,
+  :type,
+  :private,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.user_id'),
-  json_extract(:data, '$.collection_id'),
-  json_extract(:data, '$.record_id'),
-  json_extract(:data, '$.record_data'),
-  json_extract(:data, '$.type'),
-  json_extract(:data, '$.private')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 userActivityUpdate:
 UPDATE "user_activity" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "user_id" = :userId,
   "collection_id" = :collectionId,
   "record_id" = :recordId,
   "record_data" = :recordData,
   "type" = :type,
-  "private" = :private
+  "private" = :private,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-userActivityUpdateRecord(:data AS TEXT):
-UPDATE "user_activity" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "user_id" = json_extract(:data, '$.user_id'),
-  "collection_id" = json_extract(:data, '$.collection_id'),
-  "record_id" = json_extract(:data, '$.record_id'),
-  "record_data" = json_extract(:data, '$.record_data'),
-  "type" = json_extract(:data, '$.type'),
-  "private" = json_extract(:data, '$.private')
-WHERE id = json_extract(:data, '$.id');
-
-deletedRecordsGetAll:
-SELECT * FROM "deleted_records";
-
-deletedRecordsGetOne:
-SELECT * FROM "deleted_records"
-WHERE id = :id;
-
-deletedRecordsGetUnsynced:
-SELECT * FROM "deleted_records"
-WHERE synced = false;
-
-deletedRecordsGetFreshest:
-SELECT * FROM "deleted_records"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
-
-deletedRecordsHardDeleteOne:
-DELETE FROM "deleted_records"
-WHERE id = :id;
-
-deletedRecordsSoftDeleteOne:
-UPDATE "deleted_records" SET
-deleted = true, synced = false
-WHERE id = :id;
-
-deletedRecordsRestoreSoftDeleteOne:
-UPDATE "deleted_records" SET
-deleted = false, synced = false
-WHERE id = :id;
-
-deletedRecordsHardDeleteMulti:
-DELETE FROM "deleted_records"
-WHERE id IN :ids;
-
-deletedRecordsSoftDeleteMulti:
-UPDATE "deleted_records" SET
-deleted = true, synced = false
-WHERE id IN :ids;
-
-deletedRecordsRestoreSoftDeleteMulti:
-UPDATE "deleted_records" SET
-deleted = false, synced = false
-WHERE id IN :ids;
-
-deletedRecordsSetSyncStatusOne:
-UPDATE "deleted_records" SET
-synced = :value
-WHERE id = :id;
-
-deletedRecordsSetSyncStatusMulti:
-UPDATE "deleted_records" SET
-synced = :value
-WHERE id IN :ids;
-
-deletedRecordsInsert:
-INSERT INTO "deleted_records" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "collection_id",
-  "record_id",
-  "record_data"
-)
-VALUES(
-  :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
-  :collectionId,
-  :recordId,
-  :recordData
-) RETURNING *;
-
-deletedRecordsInsertRecord(:data AS TEXT):
-INSERT INTO "deleted_records" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "collection_id",
-  "record_id",
-  "record_data"
-)
-VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
-  false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.collection_id'),
-  json_extract(:data, '$.record_id'),
-  json_extract(:data, '$.record_data')
-) RETURNING *;
-
-deletedRecordsUpdate:
-UPDATE "deleted_records" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
-  "collection_id" = :collectionId,
-  "record_id" = :recordId,
-  "record_data" = :recordData
-WHERE id = :id;
-
-deletedRecordsUpdateRecord(:data AS TEXT):
-UPDATE "deleted_records" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "collection_id" = json_extract(:data, '$.collection_id'),
-  "record_id" = json_extract(:data, '$.record_id'),
-  "record_data" = json_extract(:data, '$.record_data')
-WHERE id = json_extract(:data, '$.id');
 
 userLikedSongsGetAll:
 SELECT * FROM "user_liked_songs";
@@ -1327,12 +983,6 @@ WHERE id = :id;
 userLikedSongsGetUnsynced:
 SELECT * FROM "user_liked_songs"
 WHERE synced = false;
-
-userLikedSongsGetFreshest:
-SELECT * FROM "user_liked_songs"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
 
 userLikedSongsHardDeleteOne:
 DELETE FROM "user_liked_songs"
@@ -1374,71 +1024,50 @@ WHERE id IN :ids;
 
 userLikedSongsInsert:
 INSERT INTO "user_liked_songs" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "user_id",
-  "song_id"
+  "song_id",
+  synced,
+  fresh,
+  created,
+  updated
+)
+VALUES(
+  :userId,
+  :songId,
+  false,
+  true,
+  now(),
+  now()
+) RETURNING *;
+
+userLikedSongsInsertWithId:
+INSERT OR REPLACE INTO "user_liked_songs" (
+  id,
+  "user_id",
+  "song_id",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
   :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :userId,
-  :songId
-) RETURNING *;
-
-userLikedSongsInsertRecord(:data AS TEXT):
-INSERT INTO "user_liked_songs" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "user_id",
-  "song_id"
-)
-VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :songId,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.user_id'),
-  json_extract(:data, '$.song_id')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 userLikedSongsUpdate:
 UPDATE "user_liked_songs" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "user_id" = :userId,
-  "song_id" = :songId
+  "song_id" = :songId,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
-
-userLikedSongsUpdateRecord(:data AS TEXT):
-UPDATE "user_liked_songs" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "user_id" = json_extract(:data, '$.user_id'),
-  "song_id" = json_extract(:data, '$.song_id')
-WHERE id = json_extract(:data, '$.id');
 
 userFollowersGetAll:
 SELECT * FROM "user_followers";
@@ -1450,12 +1079,6 @@ WHERE id = :id;
 userFollowersGetUnsynced:
 SELECT * FROM "user_followers"
 WHERE synced = false;
-
-userFollowersGetFreshest:
-SELECT * FROM "user_followers"
-WHERE synced = true
-ORDER BY updated DESC
-LIMIT 1;
 
 userFollowersHardDeleteOne:
 DELETE FROM "user_followers"
@@ -1497,68 +1120,158 @@ WHERE id IN :ids;
 
 userFollowersInsert:
 INSERT INTO "user_followers" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
   "user_id",
-  "target_user_id"
+  "target_user_id",
+  synced,
+  fresh,
+  created,
+  updated
+)
+VALUES(
+  :userId,
+  :targetUserId,
+  false,
+  true,
+  now(),
+  now()
+) RETURNING *;
+
+userFollowersInsertWithId:
+INSERT OR REPLACE INTO "user_followers" (
+  id,
+  "user_id",
+  "target_user_id",
+  synced,
+  fresh,
+  created,
+  updated
 )
 VALUES(
   :id,
-  :created,
-  :updated,
-  false,
-  false,
-  :fresh,
   :userId,
-  :targetUserId
-) RETURNING *;
-
-userFollowersInsertRecord(:data AS TEXT):
-INSERT INTO "user_followers" (
-  "id",
-  "created",
-  "updated",
-  "deleted",
-  "synced",
-  "fresh",
-  "user_id",
-  "target_user_id"
-)
-VALUES(
-  json_extract(:data, '$.id'),
-  json_extract(:data, '$.created'),
-  json_extract(:data, '$.updated'),
+  :targetUserId,
   false,
-  false,
-  json_extract(:data, '$.fresh'),
-  json_extract(:data, '$.user_id'),
-  json_extract(:data, '$.target_user_id')
+  true,
+  now(),
+  now()
 ) RETURNING *;
 
 userFollowersUpdate:
 UPDATE "user_followers" SET
-  "id" = :id,
-  "created" = :created,
-  "updated" = :updated,
-  "deleted" = :deleted,
-  "synced" = false,
-  "fresh" = :fresh,
   "user_id" = :userId,
-  "target_user_id" = :targetUserId
+  "target_user_id" = :targetUserId,
+  synced = false,
+  fresh = false,
+  updated = now()
 WHERE id = :id;
 
-userFollowersUpdateRecord(:data AS TEXT):
-UPDATE "user_followers" SET
-  "id" = json_extract(:data, '$.id'),
-  "created" = json_extract(:data, '$.created'),
-  "updated" = json_extract(:data, '$.updated'),
-  "deleted" = json_extract(:data, '$.deleted'),
-  "synced" = false,
-  "fresh" = json_extract(:data, '$.fresh'),
-  "user_id" = json_extract(:data, '$.user_id'),
-  "target_user_id" = json_extract(:data, '$.target_user_id')
-WHERE id = json_extract(:data, '$.id');
+changesGetAll:
+SELECT * FROM "changes";
+
+changesGetOne:
+SELECT * FROM "changes"
+WHERE id = :id;
+
+changesGetUnsynced:
+SELECT * FROM "changes"
+WHERE synced = false;
+
+changesHardDeleteOne:
+DELETE FROM "changes"
+WHERE id = :id;
+
+changesSoftDeleteOne:
+UPDATE "changes" SET
+deleted = true, synced = false
+WHERE id = :id;
+
+changesRestoreSoftDeleteOne:
+UPDATE "changes" SET
+deleted = false, synced = false
+WHERE id = :id;
+
+changesHardDeleteMulti:
+DELETE FROM "changes"
+WHERE id IN :ids;
+
+changesSoftDeleteMulti:
+UPDATE "changes" SET
+deleted = true, synced = false
+WHERE id IN :ids;
+
+changesRestoreSoftDeleteMulti:
+UPDATE "changes" SET
+deleted = false, synced = false
+WHERE id IN :ids;
+
+changesSetSyncStatusOne:
+UPDATE "changes" SET
+synced = :value
+WHERE id = :id;
+
+changesSetSyncStatusMulti:
+UPDATE "changes" SET
+synced = :value
+WHERE id IN :ids;
+
+changesInsert:
+INSERT INTO "changes" (
+  "collection_id",
+  "collection_name",
+  "record_id",
+  "record_data",
+  "action",
+  synced,
+  fresh,
+  created,
+  updated
+)
+VALUES(
+  :collectionId,
+  :collectionName,
+  :recordId,
+  :recordData,
+  :action,
+  false,
+  true,
+  now(),
+  now()
+) RETURNING *;
+
+changesInsertWithId:
+INSERT OR REPLACE INTO "changes" (
+  id,
+  "collection_id",
+  "collection_name",
+  "record_id",
+  "record_data",
+  "action",
+  synced,
+  fresh,
+  created,
+  updated
+)
+VALUES(
+  :id,
+  :collectionId,
+  :collectionName,
+  :recordId,
+  :recordData,
+  :action,
+  false,
+  true,
+  now(),
+  now()
+) RETURNING *;
+
+changesUpdate:
+UPDATE "changes" SET
+  "collection_id" = :collectionId,
+  "collection_name" = :collectionName,
+  "record_id" = :recordId,
+  "record_data" = :recordData,
+  "action" = :action,
+  synced = false,
+  fresh = false,
+  updated = now()
+WHERE id = :id;
