@@ -253,7 +253,6 @@ class SyncService {
             await _setSyncStatus(collection, item);
           }
         } catch (e) {
-          // TODO: Handle expecptions
           // Maybe save KV of count of retry then delete
           if (e is ClientException) {
             if ([400, 403, 404].contains(e.statusCode)) {
