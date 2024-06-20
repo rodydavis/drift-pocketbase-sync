@@ -16,7 +16,6 @@ enum Collections {
     userPlaylistItems("lrrynz3wk8bzckg", "user_playlist_items", '"user_playlist_items"', CollectionType.base),
     songs("s6a3vmk9ldvim14", "songs", '"songs"', CollectionType.base),
     artists("cq4ellepsrwybvk", "artists", '"artists"', CollectionType.auth),
-    userActivity("utije4fvesybnsb", "user_activity", '"user_activity"', CollectionType.base),
     userLikedSongs("7qhhksn5g6y2kdr", "user_liked_songs", '"user_liked_songs"', CollectionType.base),
     userFollowers("glsbddfy50ymkxz", "user_followers", '"user_followers"', CollectionType.base),
     changes("2avocvzobnwvl3x", "changes", '"changes"', CollectionType.base);
@@ -215,41 +214,6 @@ class Artist extends PBAuth with ArtistMappable {
     required super.email,
     required super.emailVisibility,
     required super.verified,
-    required super.created,
-    required super.updated,
-    required super.deleted,
-    required super.synced,
-    required super.fresh,
-  });
-}
-@MappableClass()
-class UserActivity extends PBBase with UserActivityMappable {
-  @MappableField(key: 'user_id')
-  final String userId;
-
-  @MappableField(key: 'collection_id')
-  final String collectionId;
-
-  @MappableField(key: 'record_id')
-  final String recordId;
-
-  @MappableField(key: 'record_data')
-  final String recordData;
-
-  @MappableField(key: 'type')
-  final String type;
-
-  @MappableField(key: 'private')
-  final bool? private;
-
-  UserActivity({
-    required super.id,
-    required this.userId,
-    required this.collectionId,
-    required this.recordId,
-    required this.recordData,
-    required this.type,
-    this.private,
     required super.created,
     required super.updated,
     required super.deleted,

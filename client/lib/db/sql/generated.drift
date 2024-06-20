@@ -88,21 +88,6 @@ CREATE TABLE "artists" (
     "fresh" BOOLEAN NOT NULL DEFAULT (true)
 ) WITH Artist;
 
-CREATE TABLE "user_activity" (
-    "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
-    "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    "collection_id" TEXT NOT NULL,
-    "record_id" TEXT NOT NULL,
-    "record_data" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
-    "private" BOOLEAN,
-    "created" DATETIME NOT NULL,
-    "updated" DATETIME NOT NULL,
-    "deleted" BOOLEAN NOT NULL DEFAULT (false),
-    "synced" BOOLEAN NOT NULL DEFAULT (false),
-    "fresh" BOOLEAN NOT NULL DEFAULT (true)
-) WITH UserActivity;
-
 CREATE TABLE "user_liked_songs" (
     "id" TEXT NOT NULL PRIMARY KEY DEFAULT (newId()),
     "user_id" TEXT NOT NULL REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -140,11 +125,6 @@ CREATE TABLE "changes" (
 ) WITH Chang;
 
 -- Indexes --
-
-CREATE INDEX "idx_wrCdI3h" ON "user_activity" (
-  "collection_id",
-  "record_id"
-);
 
 -- Queries --
 
@@ -452,6 +432,14 @@ UPDATE "album_tracks" SET
   updated = now()
 WHERE id = :id;
 
+albumTracksGetByAlbumId:
+SELECT * FROM "album_tracks" 
+WHERE "album_id" = :albumId;
+
+albumTracksGetBySongId:
+SELECT * FROM "album_tracks" 
+WHERE "song_id" = :songId;
+
 userPlaylistsGetAll:
 SELECT * FROM "user_playlists";
 
@@ -547,6 +535,10 @@ UPDATE "user_playlists" SET
   fresh = false,
   updated = now()
 WHERE id = :id;
+
+userPlaylistsGetByUserId:
+SELECT * FROM "user_playlists" 
+WHERE "user_id" = :userId;
 
 userPlaylistItemsGetAll:
 SELECT * FROM "user_playlist_items";
@@ -654,6 +646,18 @@ UPDATE "user_playlist_items" SET
   updated = now()
 WHERE id = :id;
 
+userPlaylistItemsGetByPlaylistId:
+SELECT * FROM "user_playlist_items" 
+WHERE "playlist_id" = :playlistId;
+
+userPlaylistItemsGetByUserId:
+SELECT * FROM "user_playlist_items" 
+WHERE "user_id" = :userId;
+
+userPlaylistItemsGetBySongId:
+SELECT * FROM "user_playlist_items" 
+WHERE "song_id" = :songId;
+
 songsGetAll:
 SELECT * FROM "songs";
 
@@ -754,6 +758,10 @@ UPDATE "songs" SET
   fresh = false,
   updated = now()
 WHERE id = :id;
+
+songsGetByArtistId:
+SELECT * FROM "songs" 
+WHERE "artist_id" = :artistId;
 
 artistsGetAll:
 SELECT * FROM "artists";
@@ -857,122 +865,6 @@ UPDATE "artists" SET
   updated = now()
 WHERE id = :id;
 
-userActivityGetAll:
-SELECT * FROM "user_activity";
-
-userActivityGetOne:
-SELECT * FROM "user_activity"
-WHERE id = :id;
-
-userActivityGetUnsynced:
-SELECT * FROM "user_activity"
-WHERE synced = false;
-
-userActivityHardDeleteOne:
-DELETE FROM "user_activity"
-WHERE id = :id;
-
-userActivitySoftDeleteOne:
-UPDATE "user_activity" SET
-deleted = true, synced = false
-WHERE id = :id;
-
-userActivityRestoreSoftDeleteOne:
-UPDATE "user_activity" SET
-deleted = false, synced = false
-WHERE id = :id;
-
-userActivityHardDeleteMulti:
-DELETE FROM "user_activity"
-WHERE id IN :ids;
-
-userActivitySoftDeleteMulti:
-UPDATE "user_activity" SET
-deleted = true, synced = false
-WHERE id IN :ids;
-
-userActivityRestoreSoftDeleteMulti:
-UPDATE "user_activity" SET
-deleted = false, synced = false
-WHERE id IN :ids;
-
-userActivitySetSyncStatusOne:
-UPDATE "user_activity" SET
-synced = :value
-WHERE id = :id;
-
-userActivitySetSyncStatusMulti:
-UPDATE "user_activity" SET
-synced = :value
-WHERE id IN :ids;
-
-userActivityInsert:
-INSERT INTO "user_activity" (
-  "user_id",
-  "collection_id",
-  "record_id",
-  "record_data",
-  "type",
-  "private",
-  synced,
-  fresh,
-  created,
-  updated
-)
-VALUES(
-  :userId,
-  :collectionId,
-  :recordId,
-  :recordData,
-  :type,
-  :private,
-  false,
-  true,
-  now(),
-  now()
-) RETURNING *;
-
-userActivityInsertWithId:
-INSERT OR REPLACE INTO "user_activity" (
-  id,
-  "user_id",
-  "collection_id",
-  "record_id",
-  "record_data",
-  "type",
-  "private",
-  synced,
-  fresh,
-  created,
-  updated
-)
-VALUES(
-  :id,
-  :userId,
-  :collectionId,
-  :recordId,
-  :recordData,
-  :type,
-  :private,
-  false,
-  true,
-  now(),
-  now()
-) RETURNING *;
-
-userActivityUpdate:
-UPDATE "user_activity" SET
-  "user_id" = :userId,
-  "collection_id" = :collectionId,
-  "record_id" = :recordId,
-  "record_data" = :recordData,
-  "type" = :type,
-  "private" = :private,
-  synced = false,
-  fresh = false,
-  updated = now()
-WHERE id = :id;
-
 userLikedSongsGetAll:
 SELECT * FROM "user_liked_songs";
 
@@ -1069,6 +961,14 @@ UPDATE "user_liked_songs" SET
   updated = now()
 WHERE id = :id;
 
+userLikedSongsGetByUserId:
+SELECT * FROM "user_liked_songs" 
+WHERE "user_id" = :userId;
+
+userLikedSongsGetBySongId:
+SELECT * FROM "user_liked_songs" 
+WHERE "song_id" = :songId;
+
 userFollowersGetAll:
 SELECT * FROM "user_followers";
 
@@ -1164,6 +1064,14 @@ UPDATE "user_followers" SET
   fresh = false,
   updated = now()
 WHERE id = :id;
+
+userFollowersGetByUserId:
+SELECT * FROM "user_followers" 
+WHERE "user_id" = :userId;
+
+userFollowersGetByTargetUserId:
+SELECT * FROM "user_followers" 
+WHERE "target_user_id" = :targetUserId;
 
 changesGetAll:
 SELECT * FROM "changes";

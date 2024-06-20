@@ -11,7 +11,6 @@ Map<Collections, TableInfo<Table, PBCollection>> createMapper(Database db) {
     Collections.userPlaylistItems: db.userPlaylistItems,
     Collections.songs: db.songs,
     Collections.artists: db.artists,
-    Collections.userActivity: db.userActivity,
     Collections.userLikedSongs: db.userLikedSongs,
     Collections.userFollowers: db.userFollowers,
     Collections.changes: db.changes,

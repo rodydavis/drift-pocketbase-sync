@@ -216,6 +216,16 @@ Iterable<String> createDriftFile(List<CollectionModel> collections) sync* {
       yield '  fresh = false,';
       yield "  updated = $dateFunc";
       yield "WHERE id = :id;";
+
+      // Relation queries
+      if (col.schema.any((e) => e.type == 'relation')) {
+        for (final item in col.schema.where((e) => e.type == 'relation')) {
+          yield '';
+          yield "${name}GetBy${item.name.pascalCase}:";
+          yield "SELECT * FROM ${escapeName(col.name)} ";
+          yield 'WHERE "${item.name}" = :${item.name.camelCase};';
+        }
+      }
     }
   }
   yield '';

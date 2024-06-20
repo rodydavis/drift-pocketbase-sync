@@ -2435,410 +2435,6 @@ class UserPlaylistItemsCompanion extends UpdateCompanion<UserPlaylistItem> {
   }
 }
 
-class UserActivityTable extends Table
-    with TableInfo<UserActivityTable, UserActivity> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  UserActivityTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL PRIMARY KEY DEFAULT (newId())',
-      defaultValue: const CustomExpression('newId()'));
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-      'user_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints:
-          'NOT NULL REFERENCES users(id)ON UPDATE CASCADE ON DELETE CASCADE');
-  static const VerificationMeta _collectionIdMeta =
-      const VerificationMeta('collectionId');
-  late final GeneratedColumn<String> collectionId = GeneratedColumn<String>(
-      'collection_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _recordIdMeta =
-      const VerificationMeta('recordId');
-  late final GeneratedColumn<String> recordId = GeneratedColumn<String>(
-      'record_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _recordDataMeta =
-      const VerificationMeta('recordData');
-  late final GeneratedColumn<String> recordData = GeneratedColumn<String>(
-      'record_data', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _typeMeta = const VerificationMeta('type');
-  late final GeneratedColumn<String> type = GeneratedColumn<String>(
-      'type', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _privateMeta =
-      const VerificationMeta('private');
-  late final GeneratedColumn<bool> private = GeneratedColumn<bool>(
-      'private', aliasedName, true,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _createdMeta =
-      const VerificationMeta('created');
-  late final GeneratedColumn<DateTime> created = GeneratedColumn<DateTime>(
-      'created', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _updatedMeta =
-      const VerificationMeta('updated');
-  late final GeneratedColumn<DateTime> updated = GeneratedColumn<DateTime>(
-      'updated', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _deletedMeta =
-      const VerificationMeta('deleted');
-  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
-      'deleted', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL DEFAULT FALSE',
-      defaultValue: const CustomExpression('FALSE'));
-  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
-  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
-      'synced', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL DEFAULT FALSE',
-      defaultValue: const CustomExpression('FALSE'));
-  static const VerificationMeta _freshMeta = const VerificationMeta('fresh');
-  late final GeneratedColumn<bool> fresh = GeneratedColumn<bool>(
-      'fresh', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL DEFAULT TRUE',
-      defaultValue: const CustomExpression('TRUE'));
-  @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        userId,
-        collectionId,
-        recordId,
-        recordData,
-        type,
-        private,
-        created,
-        updated,
-        deleted,
-        synced,
-        fresh
-      ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'user_activity';
-  @override
-  VerificationContext validateIntegrity(Insertable<UserActivity> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
-    }
-    if (data.containsKey('collection_id')) {
-      context.handle(
-          _collectionIdMeta,
-          collectionId.isAcceptableOrUnknown(
-              data['collection_id']!, _collectionIdMeta));
-    } else if (isInserting) {
-      context.missing(_collectionIdMeta);
-    }
-    if (data.containsKey('record_id')) {
-      context.handle(_recordIdMeta,
-          recordId.isAcceptableOrUnknown(data['record_id']!, _recordIdMeta));
-    } else if (isInserting) {
-      context.missing(_recordIdMeta);
-    }
-    if (data.containsKey('record_data')) {
-      context.handle(
-          _recordDataMeta,
-          recordData.isAcceptableOrUnknown(
-              data['record_data']!, _recordDataMeta));
-    } else if (isInserting) {
-      context.missing(_recordDataMeta);
-    }
-    if (data.containsKey('type')) {
-      context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
-    } else if (isInserting) {
-      context.missing(_typeMeta);
-    }
-    if (data.containsKey('private')) {
-      context.handle(_privateMeta,
-          private.isAcceptableOrUnknown(data['private']!, _privateMeta));
-    }
-    if (data.containsKey('created')) {
-      context.handle(_createdMeta,
-          created.isAcceptableOrUnknown(data['created']!, _createdMeta));
-    } else if (isInserting) {
-      context.missing(_createdMeta);
-    }
-    if (data.containsKey('updated')) {
-      context.handle(_updatedMeta,
-          updated.isAcceptableOrUnknown(data['updated']!, _updatedMeta));
-    } else if (isInserting) {
-      context.missing(_updatedMeta);
-    }
-    if (data.containsKey('deleted')) {
-      context.handle(_deletedMeta,
-          deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta));
-    }
-    if (data.containsKey('synced')) {
-      context.handle(_syncedMeta,
-          synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
-    }
-    if (data.containsKey('fresh')) {
-      context.handle(
-          _freshMeta, fresh.isAcceptableOrUnknown(data['fresh']!, _freshMeta));
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  UserActivity map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return UserActivity(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      userId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
-      collectionId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}collection_id'])!,
-      recordId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}record_id'])!,
-      recordData: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}record_data'])!,
-      type: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
-      private: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}private']),
-      created: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created'])!,
-      updated: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated'])!,
-      deleted: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}deleted'])!,
-      synced: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
-      fresh: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}fresh'])!,
-    );
-  }
-
-  @override
-  UserActivityTable createAlias(String alias) {
-    return UserActivityTable(attachedDatabase, alias);
-  }
-
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class UserActivityCompanion extends UpdateCompanion<UserActivity> {
-  Value<String> id;
-  Value<String> userId;
-  Value<String> collectionId;
-  Value<String> recordId;
-  Value<String> recordData;
-  Value<String> type;
-  Value<bool?> private;
-  Value<DateTime> created;
-  Value<DateTime> updated;
-  Value<bool> deleted;
-  Value<bool> synced;
-  Value<bool> fresh;
-  Value<int> rowid;
-  UserActivityCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.collectionId = const Value.absent(),
-    this.recordId = const Value.absent(),
-    this.recordData = const Value.absent(),
-    this.type = const Value.absent(),
-    this.private = const Value.absent(),
-    this.created = const Value.absent(),
-    this.updated = const Value.absent(),
-    this.deleted = const Value.absent(),
-    this.synced = const Value.absent(),
-    this.fresh = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  UserActivityCompanion.insert({
-    this.id = const Value.absent(),
-    required String userId,
-    required String collectionId,
-    required String recordId,
-    required String recordData,
-    required String type,
-    this.private = const Value.absent(),
-    required DateTime created,
-    required DateTime updated,
-    this.deleted = const Value.absent(),
-    this.synced = const Value.absent(),
-    this.fresh = const Value.absent(),
-    this.rowid = const Value.absent(),
-  })  : userId = Value(userId),
-        collectionId = Value(collectionId),
-        recordId = Value(recordId),
-        recordData = Value(recordData),
-        type = Value(type),
-        created = Value(created),
-        updated = Value(updated);
-  static Insertable<UserActivity> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<String>? collectionId,
-    Expression<String>? recordId,
-    Expression<String>? recordData,
-    Expression<String>? type,
-    Expression<bool>? private,
-    Expression<DateTime>? created,
-    Expression<DateTime>? updated,
-    Expression<bool>? deleted,
-    Expression<bool>? synced,
-    Expression<bool>? fresh,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (collectionId != null) 'collection_id': collectionId,
-      if (recordId != null) 'record_id': recordId,
-      if (recordData != null) 'record_data': recordData,
-      if (type != null) 'type': type,
-      if (private != null) 'private': private,
-      if (created != null) 'created': created,
-      if (updated != null) 'updated': updated,
-      if (deleted != null) 'deleted': deleted,
-      if (synced != null) 'synced': synced,
-      if (fresh != null) 'fresh': fresh,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  UserActivityCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? userId,
-      Value<String>? collectionId,
-      Value<String>? recordId,
-      Value<String>? recordData,
-      Value<String>? type,
-      Value<bool?>? private,
-      Value<DateTime>? created,
-      Value<DateTime>? updated,
-      Value<bool>? deleted,
-      Value<bool>? synced,
-      Value<bool>? fresh,
-      Value<int>? rowid}) {
-    return UserActivityCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      collectionId: collectionId ?? this.collectionId,
-      recordId: recordId ?? this.recordId,
-      recordData: recordData ?? this.recordData,
-      type: type ?? this.type,
-      private: private ?? this.private,
-      created: created ?? this.created,
-      updated: updated ?? this.updated,
-      deleted: deleted ?? this.deleted,
-      synced: synced ?? this.synced,
-      fresh: fresh ?? this.fresh,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
-    }
-    if (collectionId.present) {
-      map['collection_id'] = Variable<String>(collectionId.value);
-    }
-    if (recordId.present) {
-      map['record_id'] = Variable<String>(recordId.value);
-    }
-    if (recordData.present) {
-      map['record_data'] = Variable<String>(recordData.value);
-    }
-    if (type.present) {
-      map['type'] = Variable<String>(type.value);
-    }
-    if (private.present) {
-      map['private'] = Variable<bool>(private.value);
-    }
-    if (created.present) {
-      map['created'] = Variable<DateTime>(created.value);
-    }
-    if (updated.present) {
-      map['updated'] = Variable<DateTime>(updated.value);
-    }
-    if (deleted.present) {
-      map['deleted'] = Variable<bool>(deleted.value);
-    }
-    if (synced.present) {
-      map['synced'] = Variable<bool>(synced.value);
-    }
-    if (fresh.present) {
-      map['fresh'] = Variable<bool>(fresh.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('UserActivityCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('collectionId: $collectionId, ')
-          ..write('recordId: $recordId, ')
-          ..write('recordData: $recordData, ')
-          ..write('type: $type, ')
-          ..write('private: $private, ')
-          ..write('created: $created, ')
-          ..write('updated: $updated, ')
-          ..write('deleted: $deleted, ')
-          ..write('synced: $synced, ')
-          ..write('fresh: $fresh, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class UserLikedSongs extends Table
     with TableInfo<UserLikedSongs, UserLikedSong> {
   @override
@@ -3794,12 +3390,9 @@ abstract class _$Database extends GeneratedDatabase {
   late final AlbumTracks albumTracks = AlbumTracks(this);
   late final UserPlaylists userPlaylists = UserPlaylists(this);
   late final UserPlaylistItems userPlaylistItems = UserPlaylistItems(this);
-  late final UserActivityTable userActivity = UserActivityTable(this);
   late final UserLikedSongs userLikedSongs = UserLikedSongs(this);
   late final UserFollowers userFollowers = UserFollowers(this);
   late final Changes changes = Changes(this);
-  late final Index idxWrCdI3h = Index('idx_wrCdI3h',
-      'CREATE INDEX idx_wrCdI3h ON user_activity (collection_id, record_id)');
   Future<List<KeyValueData>> setItem({required String key, String? value}) {
     return customWriteReturning(
         'INSERT OR REPLACE INTO key_value ("key", value) VALUES (?1, ?2) RETURNING *',
@@ -4323,6 +3916,26 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
+  Selectable<AlbumTrack> albumTracksGetByAlbumId({required String albumId}) {
+    return customSelect('SELECT * FROM album_tracks WHERE album_id = ?1',
+        variables: [
+          Variable<String>(albumId)
+        ],
+        readsFrom: {
+          albumTracks,
+        }).asyncMap(albumTracks.mapFromRow);
+  }
+
+  Selectable<AlbumTrack> albumTracksGetBySongId({required String songId}) {
+    return customSelect('SELECT * FROM album_tracks WHERE song_id = ?1',
+        variables: [
+          Variable<String>(songId)
+        ],
+        readsFrom: {
+          albumTracks,
+        }).asyncMap(albumTracks.mapFromRow);
+  }
+
   Selectable<UserPlaylist> userPlaylistsGetAll() {
     return customSelect('SELECT * FROM user_playlists',
         variables: [],
@@ -4477,6 +4090,16 @@ abstract class _$Database extends GeneratedDatabase {
       updates: {userPlaylists},
       updateKind: UpdateKind.update,
     );
+  }
+
+  Selectable<UserPlaylist> userPlaylistsGetByUserId({required String userId}) {
+    return customSelect('SELECT * FROM user_playlists WHERE user_id = ?1',
+        variables: [
+          Variable<String>(userId)
+        ],
+        readsFrom: {
+          userPlaylists,
+        }).asyncMap(userPlaylists.mapFromRow);
   }
 
   Selectable<UserPlaylistItem> userPlaylistItemsGetAll() {
@@ -4654,6 +4277,40 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
+  Selectable<UserPlaylistItem> userPlaylistItemsGetByPlaylistId(
+      {required String playlistId}) {
+    return customSelect(
+        'SELECT * FROM user_playlist_items WHERE playlist_id = ?1',
+        variables: [
+          Variable<String>(playlistId)
+        ],
+        readsFrom: {
+          userPlaylistItems,
+        }).asyncMap(userPlaylistItems.mapFromRow);
+  }
+
+  Selectable<UserPlaylistItem> userPlaylistItemsGetByUserId(
+      {required String userId}) {
+    return customSelect('SELECT * FROM user_playlist_items WHERE user_id = ?1',
+        variables: [
+          Variable<String>(userId)
+        ],
+        readsFrom: {
+          userPlaylistItems,
+        }).asyncMap(userPlaylistItems.mapFromRow);
+  }
+
+  Selectable<UserPlaylistItem> userPlaylistItemsGetBySongId(
+      {required String songId}) {
+    return customSelect('SELECT * FROM user_playlist_items WHERE song_id = ?1',
+        variables: [
+          Variable<String>(songId)
+        ],
+        readsFrom: {
+          userPlaylistItems,
+        }).asyncMap(userPlaylistItems.mapFromRow);
+  }
+
   Selectable<Song> songsGetAll() {
     return customSelect('SELECT * FROM songs', variables: [], readsFrom: {
       songs,
@@ -4812,6 +4469,14 @@ abstract class _$Database extends GeneratedDatabase {
       updates: {songs},
       updateKind: UpdateKind.update,
     );
+  }
+
+  Selectable<Song> songsGetByArtistId({String? artistId}) {
+    return customSelect('SELECT * FROM songs WHERE artist_id = ?1', variables: [
+      Variable<String>(artistId)
+    ], readsFrom: {
+      songs,
+    }).asyncMap(songs.mapFromRow);
   }
 
   Selectable<Artist> artistsGetAll() {
@@ -4975,191 +4640,6 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Selectable<UserActivity> userActivityGetAll() {
-    return customSelect('SELECT * FROM user_activity',
-        variables: [],
-        readsFrom: {
-          userActivity,
-        }).asyncMap(userActivity.mapFromRow);
-  }
-
-  Selectable<UserActivity> userActivityGetOne({required String id}) {
-    return customSelect('SELECT * FROM user_activity WHERE id = ?1',
-        variables: [
-          Variable<String>(id)
-        ],
-        readsFrom: {
-          userActivity,
-        }).asyncMap(userActivity.mapFromRow);
-  }
-
-  Selectable<UserActivity> userActivityGetUnsynced() {
-    return customSelect('SELECT * FROM user_activity WHERE synced = FALSE',
-        variables: [],
-        readsFrom: {
-          userActivity,
-        }).asyncMap(userActivity.mapFromRow);
-  }
-
-  Future<int> userActivityHardDeleteOne({required String id}) {
-    return customUpdate(
-      'DELETE FROM user_activity WHERE id = ?1',
-      variables: [Variable<String>(id)],
-      updates: {userActivity},
-      updateKind: UpdateKind.delete,
-    );
-  }
-
-  Future<int> userActivitySoftDeleteOne({required String id}) {
-    return customUpdate(
-      'UPDATE user_activity SET deleted = TRUE, synced = FALSE WHERE id = ?1',
-      variables: [Variable<String>(id)],
-      updates: {userActivity},
-      updateKind: UpdateKind.update,
-    );
-  }
-
-  Future<int> userActivityRestoreSoftDeleteOne({required String id}) {
-    return customUpdate(
-      'UPDATE user_activity SET deleted = FALSE, synced = FALSE WHERE id = ?1',
-      variables: [Variable<String>(id)],
-      updates: {userActivity},
-      updateKind: UpdateKind.update,
-    );
-  }
-
-  Future<int> userActivityHardDeleteMulti({required List<String> ids}) {
-    var $arrayStartIndex = 1;
-    final expandedids = $expandVar($arrayStartIndex, ids.length);
-    $arrayStartIndex += ids.length;
-    return customUpdate(
-      'DELETE FROM user_activity WHERE id IN ($expandedids)',
-      variables: [for (var $ in ids) Variable<String>($)],
-      updates: {userActivity},
-      updateKind: UpdateKind.delete,
-    );
-  }
-
-  Future<int> userActivitySoftDeleteMulti({required List<String> ids}) {
-    var $arrayStartIndex = 1;
-    final expandedids = $expandVar($arrayStartIndex, ids.length);
-    $arrayStartIndex += ids.length;
-    return customUpdate(
-      'UPDATE user_activity SET deleted = TRUE, synced = FALSE WHERE id IN ($expandedids)',
-      variables: [for (var $ in ids) Variable<String>($)],
-      updates: {userActivity},
-      updateKind: UpdateKind.update,
-    );
-  }
-
-  Future<int> userActivityRestoreSoftDeleteMulti({required List<String> ids}) {
-    var $arrayStartIndex = 1;
-    final expandedids = $expandVar($arrayStartIndex, ids.length);
-    $arrayStartIndex += ids.length;
-    return customUpdate(
-      'UPDATE user_activity SET deleted = FALSE, synced = FALSE WHERE id IN ($expandedids)',
-      variables: [for (var $ in ids) Variable<String>($)],
-      updates: {userActivity},
-      updateKind: UpdateKind.update,
-    );
-  }
-
-  Future<int> userActivitySetSyncStatusOne(
-      {required bool value, required String id}) {
-    return customUpdate(
-      'UPDATE user_activity SET synced = ?1 WHERE id = ?2',
-      variables: [Variable<bool>(value), Variable<String>(id)],
-      updates: {userActivity},
-      updateKind: UpdateKind.update,
-    );
-  }
-
-  Future<int> userActivitySetSyncStatusMulti(
-      {required bool value, required List<String> ids}) {
-    var $arrayStartIndex = 2;
-    final expandedids = $expandVar($arrayStartIndex, ids.length);
-    $arrayStartIndex += ids.length;
-    return customUpdate(
-      'UPDATE user_activity SET synced = ?1 WHERE id IN ($expandedids)',
-      variables: [
-        Variable<bool>(value),
-        for (var $ in ids) Variable<String>($)
-      ],
-      updates: {userActivity},
-      updateKind: UpdateKind.update,
-    );
-  }
-
-  Future<List<UserActivity>> userActivityInsert(
-      {required String userId,
-      required String collectionId,
-      required String recordId,
-      required String recordData,
-      required String type,
-      bool? private}) {
-    return customWriteReturning(
-        'INSERT INTO user_activity (user_id, collection_id, record_id, record_data, type, private, synced, fresh, created, updated) VALUES (?1, ?2, ?3, ?4, ?5, ?6, FALSE, TRUE, now(), now()) RETURNING *',
-        variables: [
-          Variable<String>(userId),
-          Variable<String>(collectionId),
-          Variable<String>(recordId),
-          Variable<String>(recordData),
-          Variable<String>(type),
-          Variable<bool>(private)
-        ],
-        updates: {
-          userActivity
-        }).then((rows) => Future.wait(rows.map(userActivity.mapFromRow)));
-  }
-
-  Future<List<UserActivity>> userActivityInsertWithId(
-      {required String id,
-      required String userId,
-      required String collectionId,
-      required String recordId,
-      required String recordData,
-      required String type,
-      bool? private}) {
-    return customWriteReturning(
-        'INSERT OR REPLACE INTO user_activity (id, user_id, collection_id, record_id, record_data, type, private, synced, fresh, created, updated) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, FALSE, TRUE, now(), now()) RETURNING *',
-        variables: [
-          Variable<String>(id),
-          Variable<String>(userId),
-          Variable<String>(collectionId),
-          Variable<String>(recordId),
-          Variable<String>(recordData),
-          Variable<String>(type),
-          Variable<bool>(private)
-        ],
-        updates: {
-          userActivity
-        }).then((rows) => Future.wait(rows.map(userActivity.mapFromRow)));
-  }
-
-  Future<int> userActivityUpdate(
-      {required String userId,
-      required String collectionId,
-      required String recordId,
-      required String recordData,
-      required String type,
-      bool? private,
-      required String id}) {
-    return customUpdate(
-      'UPDATE user_activity SET user_id = ?1, collection_id = ?2, record_id = ?3, record_data = ?4, type = ?5, private = ?6, synced = FALSE, fresh = FALSE, updated = now() WHERE id = ?7',
-      variables: [
-        Variable<String>(userId),
-        Variable<String>(collectionId),
-        Variable<String>(recordId),
-        Variable<String>(recordData),
-        Variable<String>(type),
-        Variable<bool>(private),
-        Variable<String>(id)
-      ],
-      updates: {userActivity},
-      updateKind: UpdateKind.update,
-    );
-  }
-
   Selectable<UserLikedSong> userLikedSongsGetAll() {
     return customSelect('SELECT * FROM user_liked_songs',
         variables: [],
@@ -5315,6 +4795,28 @@ abstract class _$Database extends GeneratedDatabase {
       updates: {userLikedSongs},
       updateKind: UpdateKind.update,
     );
+  }
+
+  Selectable<UserLikedSong> userLikedSongsGetByUserId(
+      {required String userId}) {
+    return customSelect('SELECT * FROM user_liked_songs WHERE user_id = ?1',
+        variables: [
+          Variable<String>(userId)
+        ],
+        readsFrom: {
+          userLikedSongs,
+        }).asyncMap(userLikedSongs.mapFromRow);
+  }
+
+  Selectable<UserLikedSong> userLikedSongsGetBySongId(
+      {required String songId}) {
+    return customSelect('SELECT * FROM user_liked_songs WHERE song_id = ?1',
+        variables: [
+          Variable<String>(songId)
+        ],
+        readsFrom: {
+          userLikedSongs,
+        }).asyncMap(userLikedSongs.mapFromRow);
   }
 
   Selectable<UserFollower> userFollowersGetAll() {
@@ -5475,6 +4977,28 @@ abstract class _$Database extends GeneratedDatabase {
       updates: {userFollowers},
       updateKind: UpdateKind.update,
     );
+  }
+
+  Selectable<UserFollower> userFollowersGetByUserId({required String userId}) {
+    return customSelect('SELECT * FROM user_followers WHERE user_id = ?1',
+        variables: [
+          Variable<String>(userId)
+        ],
+        readsFrom: {
+          userFollowers,
+        }).asyncMap(userFollowers.mapFromRow);
+  }
+
+  Selectable<UserFollower> userFollowersGetByTargetUserId(
+      {required String targetUserId}) {
+    return customSelect(
+        'SELECT * FROM user_followers WHERE target_user_id = ?1',
+        variables: [
+          Variable<String>(targetUserId)
+        ],
+        readsFrom: {
+          userFollowers,
+        }).asyncMap(userFollowers.mapFromRow);
   }
 
   Selectable<Chang> changesGetAll() {
@@ -5665,11 +5189,9 @@ abstract class _$Database extends GeneratedDatabase {
         albumTracks,
         userPlaylists,
         userPlaylistItems,
-        userActivity,
         userLikedSongs,
         userFollowers,
-        changes,
-        idxWrCdI3h
+        changes
       ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
@@ -5756,20 +5278,6 @@ abstract class _$Database extends GeneratedDatabase {
                 limitUpdateKind: UpdateKind.update),
             result: [
               TableUpdate('user_playlist_items', kind: UpdateKind.update),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('users',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('user_activity', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('users',
-                limitUpdateKind: UpdateKind.update),
-            result: [
-              TableUpdate('user_activity', kind: UpdateKind.update),
             ],
           ),
           WritePropagation(

@@ -23,7 +23,10 @@ GoRouter createRouter(SyncService service) {
         routes: [
           GoRoute(
             path: 'playlists',
-            builder: (context, state) => PlaylistsScreen(service: service),
+            builder: (context, state) => PlaylistsScreen(
+              service: service,
+              userId: userId$()!,
+            ),
           ),
           GoRoute(
             path: 'settings',

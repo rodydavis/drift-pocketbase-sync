@@ -8,9 +8,11 @@ import '../auth/signal.dart';
 class PlaylistsScreen extends StatefulWidget {
   const PlaylistsScreen({
     super.key,
+    required this.userId,
     required this.service,
   });
 
+  final String userId;
   final SyncService service;
 
   @override
@@ -22,7 +24,10 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
 
   late final playlists$ = bindSignal(
     context,
-    widget.service.db.userPlaylistsGetAll().watch().toSignal(),
+    widget.service.db
+        .userPlaylistsGetByUserId(userId: widget.userId)
+        .watch()
+        .toSignal(),
   );
 
   @override
