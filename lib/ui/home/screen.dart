@@ -1,5 +1,7 @@
+import 'package:client/ui/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,6 +27,14 @@ class HomeScreen extends StatelessWidget {
             },
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.refresh),
+        onPressed: () async {
+          final pb = Provider.of<PocketBase>(context)!;
+          final res = await pb.send('/test');
+          print(res);
+        },
       ),
     );
   }

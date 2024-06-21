@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -96,6 +98,12 @@ func main() {
 		SetupSyncService(e, app)
 		e.Router.File("/assets/sqlite3.wasm", "web/sqlite3.wasm", crossOriginHeaders)
 		e.Router.File("/assets/sqlite3.debug.wasm", "web/sqlite3.debug.wasm", crossOriginHeaders)
+		count := 0
+		e.Router.GET("/test", func(c echo.Context) error {
+			count += 1
+			app.Logger().Info("Count: " + fmt.Sprint(count))
+			return c.JSON(http.StatusOK, map[string]string{"count": fmt.Sprint(count)})
+		}, defaultCacheHeaders)
 		return nil
 	})
 
@@ -109,7 +117,19 @@ func crossOriginHeaders(next echo.HandlerFunc) echo.HandlerFunc {
 		c.Response().Header().Set("Cross-Origin-Opener-Policy", "same-origin")
 		c.Response().Header().Set("Cross-Origin-Embedder-Policy", "credentialless")
 
-		if err := next(c); err != nil { //exec main process
+		if err := next(c); err != nil {
+			c.Error(err)
+		}
+		return nil
+	}
+}
+
+func defaultCacheHeaders(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// c.Response().Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
+		c.Response().Header().Set("Cache-Control", "public, max-age=1, stale-while-revalidate=59")
+
+		if err := next(c); err != nil {
 			c.Error(err)
 		}
 		return nil

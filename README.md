@@ -7,7 +7,6 @@ This is a simple Flutter project that demonstrates how to sync a [Pocketbase](ht
 ### Run the server
 
 ```bash
-cd server
 make dev 
 ```
 
@@ -24,7 +23,6 @@ Import the `pb_schema.json` file into your Pocketbase admin dashboard.
 ### Run the tests
 
 ```bash
-cd client
 flutter test
 ```
 
@@ -39,18 +37,10 @@ The client needs to be in sync with the server to ensure schema alignment.
 To update the generated code, run the following command:
 
 ```bash
-cd scripts
 make generate
 ```
 
 This will run the generate command, which you can change the admin username and password variables in the Makefile.
-
-### Rebuild the client generated code
-
-```bash
-cd client
-make generate
-```
 
 Drift does support schema migrations, see the [documentation](https://drift.simonbinder.eu/docs/migrations/) for more information.
 
@@ -65,8 +55,7 @@ CRDTs are great for eventual consistency, but they can be complex to implement a
 The code for generating a new ID is take directly from the Pocketbase codebase.
 
 ```dart
-final Database db = ...;
-final id = db.newId();
+final id = Database.newId();
 ```
 
 ### How do I sync the data?
