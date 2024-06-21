@@ -1,7 +1,7 @@
-import 'package:client/db/connection/connect.dart';
-import 'package:client/db/database.dart';
-import 'package:client/db/sql/generated.dart';
-import 'package:client/db/sync.dart';
+import 'package:client/database/connection/connect.memory.dart';
+import 'package:client/database/database.dart';
+import 'package:client/database/sql/generated.dart';
+import 'package:client/database/sync.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pocketbase/pocketbase.dart';
 

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:signals/signals_flutter_extended.dart';
 
-import '../db/sync.dart';
+import '../database/sync.dart';
 import 'provider.dart';
 import 'router.dart';
 

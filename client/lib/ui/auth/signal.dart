@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:signals/signals.dart';
 
-import '../../db/database.dart';
+import '../../database/database.dart';
 
 const authKey = 'auth-token';
 
@@ -58,5 +58,6 @@ void Function() initAuthListener(PocketBase pb, Database db) {
 
   final connector = connect(auth$);
   connector << stream;
+  auth.save(auth.token, auth.model);
   return connector.dispose;
 }

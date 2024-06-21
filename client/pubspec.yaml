@@ -3,7 +3,7 @@ description: "PocketBase FLutter Client"
 publish_to: 'none' 
 version: 1.0.0+1
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -22,6 +22,7 @@ dependencies:
   form_builder_validators: ^10.0.1
   timeago: ^3.6.1
   sqlite3: ^2.4.3
+  fetch_client: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +31,13 @@ dev_dependencies:
   drift_dev: ^2.18.0
   build_runner: ^2.4.11
   dart_mappable_builder: ^4.2.3
+  # We use this to compile the shared web worker for the web database. This dependency
+  # isn't required for most apps. You only need it if you want to target the web, use
+  # web workers for drift AND want to compile those web workers through `build_runner`.
+  # Either way, using this package with Flutter requires a delicate setup described in
+  # `build.yaml`.
+  build_web_compilers: ^4.0.0
+  build: ^2.2.1
 
 flutter:
   uses-material-design: true

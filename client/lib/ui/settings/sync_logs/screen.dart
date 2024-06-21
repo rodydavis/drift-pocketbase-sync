@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:signals/signals_flutter_extended.dart';
 
-import '../../../db/sync.dart';
+import '../../../database/sync.dart';
 import '../../app.dart';
 import '../../provider.dart';
 

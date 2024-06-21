@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-import '../../db/sql/generated.dart';
-import '../../db/sync.dart';
+import '../../database/sql/generated.dart';
+import '../../database/sync.dart';
 import '../auth/signal.dart';
 
 class PlaylistsScreen extends StatefulWidget {

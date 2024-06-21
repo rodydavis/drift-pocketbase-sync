@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:signals/signals_flutter.dart';
 
-import '../db/sync.dart';
+import '../database/sync.dart';
 import 'auth/login/screen.dart';
 import 'auth/signal.dart';
 import 'home/screen.dart';

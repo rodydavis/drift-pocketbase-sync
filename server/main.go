@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
@@ -93,10 +94,24 @@ func main() {
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.GET("/*", apis.StaticDirectoryHandler(os.DirFS(publicDir), indexFallback))
 		SetupSyncService(e, app)
+		e.Router.File("/assets/sqlite3.wasm", "assets/sqlite3.wasm", sqliteHeaders)
+		e.Router.File("/assets/sqlite3.debug.wasm", "assets/sqlite3.debug.wasm", sqliteHeaders)
 		return nil
 	})
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func sqliteHeaders(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Response().Header().Set("Cross-Origin-Opener-Policy", "same-origin")
+		c.Response().Header().Set("Cross-Origin-Embedder-Policy", "credentialless")
+
+		if err := next(c); err != nil { //exec main process
+			c.Error(err)
+		}
+		return nil
 	}
 }
