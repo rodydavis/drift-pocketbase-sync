@@ -4,8 +4,6 @@ import 'package:drift/wasm.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqlite3/wasm.dart';
 
-import '../../pocketbase/client.dart';
-
 QueryExecutor createExecutor(
   String name,
   void Function(CommonDatabase) setup, {
@@ -34,5 +32,5 @@ Uri sqliteUrl() {
   if (kDebugMode) {
     return Uri.parse('sqlite3.debug.wasm');
   }
-  return Uri.parse('${pbHost()}/assets/sqlite3.wasm');
+  return Uri.parse('assets/sqlite3.wasm');
 }

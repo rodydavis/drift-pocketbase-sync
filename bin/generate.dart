@@ -17,7 +17,7 @@ void main(List<String> args) async {
 
   if (args.contains('--import')) {
     // Import schema
-    const schemaPath = "../pb_schema.json";
+    const schemaPath = "./pb_schema.json";
     final jsonData = jsonDecode(File(schemaPath).readAsStringSync());
     await pb.collections.import(
       jsonData,
@@ -29,17 +29,17 @@ void main(List<String> args) async {
   final collections = await pb.collections.getFullList();
   {
     final result = createDriftFile(collections).join('\n');
-    const outFile = "../client/lib/db/sql/generated.drift";
+    const outFile = "./lib/database/sql/generated.drift";
     File(outFile).writeAsStringSync(result);
   }
   {
     final result = createClasses(collections).join('\n');
-    const outFile = "../client/lib/db/sql/generated.dart";
+    const outFile = "./lib/database/sql/generated.dart";
     File(outFile).writeAsStringSync(result);
   }
   {
     final result = createMapper(collections).join('\n');
-    const outFile = "../client/lib/db/mapper.dart";
+    const outFile = "./lib/database/mapper.dart";
     File(outFile).writeAsStringSync(result);
   }
 }

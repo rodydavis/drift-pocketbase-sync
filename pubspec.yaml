@@ -23,6 +23,7 @@ dependencies:
   timeago: ^3.6.1
   sqlite3: ^2.4.3
   fetch_client: ^1.1.2
+  recase: ^4.1.0
 
 dev_dependencies:
   flutter_test:

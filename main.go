@@ -94,8 +94,8 @@ func main() {
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.GET("/*", apis.StaticDirectoryHandler(os.DirFS(publicDir), indexFallback))
 		SetupSyncService(e, app)
-		e.Router.File("/assets/sqlite3.wasm", "assets/sqlite3.wasm", sqliteHeaders)
-		e.Router.File("/assets/sqlite3.debug.wasm", "assets/sqlite3.debug.wasm", sqliteHeaders)
+		e.Router.File("/assets/sqlite3.wasm", "web/sqlite3.wasm", crossOriginHeaders)
+		e.Router.File("/assets/sqlite3.debug.wasm", "web/sqlite3.debug.wasm", crossOriginHeaders)
 		return nil
 	})
 
@@ -104,7 +104,7 @@ func main() {
 	}
 }
 
-func sqliteHeaders(next echo.HandlerFunc) echo.HandlerFunc {
+func crossOriginHeaders(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		c.Response().Header().Set("Cross-Origin-Opener-Policy", "same-origin")
 		c.Response().Header().Set("Cross-Origin-Embedder-Policy", "credentialless")
