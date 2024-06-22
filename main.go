@@ -104,6 +104,10 @@ func main() {
 			app.Logger().Info("Count: " + fmt.Sprint(count))
 			return c.JSON(http.StatusOK, map[string]string{"count": fmt.Sprint(count)})
 		}, defaultCacheHeaders)
+		app.OnFileDownloadRequest().Add(func(e *core.FileDownloadEvent) error {
+			e.HttpContext.Response().Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+			return nil
+		})
 		return nil
 	})
 
