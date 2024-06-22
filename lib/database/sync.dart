@@ -410,6 +410,7 @@ extension on DateTime {
 
 Variable variable(dynamic val) {
   if (val is Map) return Variable(jsonEncode(val));
+  if (val is String) if (val.trim().isEmpty) return const Variable(null);
   return Variable(val);
 }
 
