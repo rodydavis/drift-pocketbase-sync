@@ -15,6 +15,7 @@ import (
 	"github.com/pocketbase/pocketbase/plugins/ghupdate"
 	"github.com/pocketbase/pocketbase/plugins/jsvm"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
+	"github.com/rodydavis/flutter-pocketbase-sync/hooks"
 )
 
 func main() {
@@ -95,19 +96,19 @@ func main() {
 	// serves static files from the provided public dir (if exists)
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.GET("/*", apis.StaticDirectoryHandler(os.DirFS(publicDir), indexFallback))
-		SetupSyncService(e, app)
+		hooks.SetupSyncService(e, app)
 		e.Router.File("/assets/sqlite3.wasm", "web/sqlite3.wasm", crossOriginHeaders)
 		e.Router.File("/assets/sqlite3.debug.wasm", "web/sqlite3.debug.wasm", crossOriginHeaders)
+		app.OnFileDownloadRequest().Add(func(e *core.FileDownloadEvent) error {
+			e.HttpContext.Response().Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+			return nil
+		})
 		count := 0
 		e.Router.GET("/test", func(c echo.Context) error {
 			count += 1
 			app.Logger().Info("Count: " + fmt.Sprint(count))
 			return c.JSON(http.StatusOK, map[string]string{"count": fmt.Sprint(count)})
 		}, defaultCacheHeaders)
-		app.OnFileDownloadRequest().Add(func(e *core.FileDownloadEvent) error {
-			e.HttpContext.Response().Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-			return nil
-		})
 		return nil
 	})
 
