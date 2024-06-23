@@ -13,7 +13,7 @@ import 'ui/provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final db = createDatabase(
-    'example.db',
+    'app.sqlite',
     logStatements: true,
   );
   final pb = await createPbClient(db);

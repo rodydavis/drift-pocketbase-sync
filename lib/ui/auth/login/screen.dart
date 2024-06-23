@@ -5,6 +5,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:signals/signals_flutter.dart';
 
+import '../../../database/database.dart';
 import '../../provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -80,17 +81,25 @@ class _LoginScreenState extends State<LoginScreen> {
                                 formKey.currentState!.save();
                                 final messenger = ScaffoldMessenger.of(context);
                                 final pb = Provider.of<PocketBase>(context)!;
+                                final db = Provider.of<Database>(context)!;
                                 try {
                                   loading$.value = true;
                                   final col = pb.collection(authCollection);
-                                  await col.authWithPassword(
+                                  final auth = await col.authWithPassword(
                                     username$()!,
                                     password$()!,
+                                  );
+                                  final user = auth.record!;
+                                  await db.usersInsertWithId(
+                                    email: user.getStringValue('email'),
+                                    username: user.getStringValue('username'),
+                                    id: user.id,
                                   );
                                 } catch (e) {
                                   log('error login: $e');
                                   messenger.showSnackBar(SnackBar(
                                     content: Text('Error logging in: $e'),
+                                    duration: const Duration(minutes: 1),
                                   ));
                                 } finally {
                                   loading$.value = false;

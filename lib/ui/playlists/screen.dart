@@ -85,7 +85,7 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
             name: 'New Playlist: ${DateTime.now().toIso8601String()}',
             userId: userId,
           );
-          await widget.service.syncCollection(Collections.userPlaylists);
+          // await widget.service.syncCollection(Collections.userPlaylists);
         },
       ),
     );
